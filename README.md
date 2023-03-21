@@ -16,6 +16,7 @@ Uses [GORM](https://gorm.io/)
 
 ## Hot Reload (air)
 
+[Go Air](https://github.com/cosmtrek/air) enables hot reloading in go.
 Usage of air:
 
 1. Create of config file (.air.toml):
