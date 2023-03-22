@@ -57,5 +57,5 @@ func main() {
 
 	// run router
 	// router.Run(":" + cfg.Server.Port)
-	router.Run(cfg.Server.Protocol + "://" + cfg.Server.Host + ":" + cfg.Server.Port)
+	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
 }
