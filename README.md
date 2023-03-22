@@ -25,6 +25,13 @@ Usage of air:
    - `air`
      Instead of:
    - `go run main.go`
+   - `go run main.go server_config.go`
+
+## Config YAML
+
+Uses [Clean Env](https://github.com/ilyakaznacheev/cleanenv):
+
+- go get -u github.com/ilyakaznacheev/cleanenv
 
 ## cURL Calls
 

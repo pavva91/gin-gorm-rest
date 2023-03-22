@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/pavva91/gin-gorm-rest/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -8,11 +10,14 @@ import (
 
 var DB *gorm.DB
 
-func Connect() {
-	db, err := gorm.Open(postgres.Open("postgres://postgres:postgres@localhost:5432/postgres"),)
+func ConnectToDB(cfg ServerConfig) {
+	// var cfg ServerConfig
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", cfg.Database.Host, cfg.Database.Username, cfg.Database.Password, cfg.Database.Name, cfg.Database.Port)
+
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Event{})
 	DB = db
 }

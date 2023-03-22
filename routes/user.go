@@ -9,9 +9,12 @@ func UserRoute(router *gin.Engine) {
 	userPath := "/users"
 	router.GET(userPath, controllers.ListUsers)
 	router.GET(userPath+"/", controllers.ListUsers)
-	router.GET("/", controllers.HelloWorld)
 	router.GET(userPath+"/:id", controllers.GetUser)
 	router.POST(userPath+"/", controllers.CreateUser)
 	router.DELETE(userPath+"/:id", controllers.DeleteUser)
 	router.PUT(userPath+"/:id", controllers.UpdateUser)
+}
+
+func HelloRoute(router *gin.Engine) {
+	router.GET("/", controllers.HelloWorld)
 }
