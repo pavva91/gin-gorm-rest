@@ -14,7 +14,3 @@ func UserRoute(router *gin.Engine) {
 	router.DELETE(userPath+"/:id", controllers.DeleteUser)
 	router.PUT(userPath+"/:id", controllers.UpdateUser)
 }
-
-func HelloRoute(router *gin.Engine) {
-	router.GET("/", controllers.HelloWorld)
-}
