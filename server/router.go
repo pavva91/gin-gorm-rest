@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/controllers"
 	swaggerfiles "github.com/swaggo/files"
@@ -9,6 +10,7 @@ import (
 
 func NewRouter(apiVersion string) *gin.Engine {
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
@@ -38,7 +40,7 @@ func NewRouter(apiVersion string) *gin.Engine {
 			eventsGroup.GET("/:id", controllers.GetEvent)
 			eventsGroup.POST("/", controllers.CreateEvent)
 			eventsGroup.DELETE("/:id", controllers.DeleteEvent)
-			eventsGroup.PUT("/:id", controllers.UpdateEvent)
+			eventsGroup.PUT("/:id", controllers.SubstituteEvent)
 		}
 	}
 

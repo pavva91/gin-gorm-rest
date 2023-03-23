@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pavva91/gin-gorm-rest/db"
 	"github.com/pavva91/gin-gorm-rest/models"
 )
 
@@ -122,17 +121,31 @@ func CreateEvent(c *gin.Context) {
 //	@Router			/events/{event_id} [delete]
 func DeleteEvent(c *gin.Context) {
 	var event models.Event
-	// db.DB.Where("id = ?", c.Param("id")).Delete(&event)
-	db.GetDB().Where("id = ?", c.Param("id")).Delete(&event)
+	eventModel.DeleteById(c.Param("id"))
+	// db.GetDB().Where("id = ?", c.Param("id")).Delete(&event)
 	c.JSON(http.StatusOK, &event)
 }
 
-func UpdateEvent(c *gin.Context) {
+// SubstituteEvent godoc
+//
+//	@Summary		SubstituteEvent
+//	@Description	Substitute the Event completely with the new JSON body
+//	@Tags			events
+//	@Accept			json
+//	@Produce		json
+//	@Param event_id   path int true "Event ID"
+//  @Param			request body models.Event true "The new Event Values in JSON"
+//	@Success		200	{object}	models.Event
+//
+//	@Failure		404	{object}	message
+//
+//	@Router			/events/{event_id} [put]
+func SubstituteEvent(c *gin.Context) {
 	var event models.Event
-	// db.DB.Where("id = ?", c.Param("id")).First(&event)
-	db.GetDB().Where("id = ?", c.Param("id")).First(&event)
+	eventModel.GetByID(c.Param("id"))
+	// db.GetDB().Where("id = ?", c.Param("id")).First(&event)
 	c.BindJSON(&event)
-	// db.DB.Save(&event)
-	db.GetDB().Save(&event)
+	eventModel.SaveEvent(&event)
+	// db.GetDB().Save(&event)
 	c.JSON(http.StatusOK, &event)
 }

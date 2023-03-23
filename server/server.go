@@ -13,7 +13,7 @@ func Init(cfg config.ServerConfig) {
 	apiVersion := fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
 	router := NewRouter(apiVersion)
 
-	// CORS Configs
+	// CORS Configs (is now broken)
 	switch env := cfg.Server.Environment; env {
 	case "dev":
 		router.Use(cors.Default())
@@ -27,13 +27,6 @@ func Init(cfg config.ServerConfig) {
 	default:
 		log.Println("Incorrect Dev Environment, interrupt execution")
 		os.Exit(1)
-	}
-	if cfg.Server.Environment == "dev" {
-		router.Use(cors.Default())
-	} else {
-		cors_config := cors.DefaultConfig()
-		cors_config.AllowOrigins = []string{"http://localhost:5173"}
-		router.Use(cors.New(cors_config))
 	}
 
 	// router.Run(config.GetString("server.port"))

@@ -34,3 +34,15 @@ func (h Event) GetByID(id string) (*Event, error) {
 	db.GetDB().Where("id = ?", id).First(&event)
 	return event, nil
 }
+
+func (h Event) DeleteById(id string) (*Event, error) {
+	var event *Event
+	db.GetDB().Where("id = ?", id).Delete(&event)
+	return event, nil
+}
+
+func (h Event) SaveEvent(*Event) (*Event, error) {
+	var event *Event
+	db.GetDB().Save(&event)
+	return event, nil
+}

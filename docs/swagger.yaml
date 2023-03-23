@@ -123,6 +123,36 @@ paths:
       summary: Get Event
       tags:
       - events
+    put:
+      consumes:
+      - application/json
+      description: Substitute the Event completely with the new JSON body
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
+      - description: The new Event Values in JSON
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.message'
+      summary: SubstituteEvent
+      tags:
+      - events
   /health:
     get:
       consumes:
