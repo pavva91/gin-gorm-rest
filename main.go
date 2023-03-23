@@ -15,8 +15,6 @@ import (
 	// ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-//	@BasePath	/api/v1
-
 // import "github.com/pavva91/gin-gorm-rest/routes"
 
 //	@title			Swagger Example API
@@ -31,13 +29,10 @@ import (
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-//	@host		localhost:8080
-//	@BasePath	/api/v1
-
 //	@securityDefinitions.basic	BasicAuth
 
-// @externalDocs.description	OpenAPI
-// @externalDocs.url			https://swagger.io/resources/open-api/
+//	@externalDocs.description	OpenAPI
+//	@externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	var cfg config.ServerConfig
 
@@ -47,6 +42,7 @@ func main() {
 	}
 
 	docs.SwaggerInfo.BasePath = fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
 
 	db.ConnectToDB(cfg)
 	db.GetDB().AutoMigrate(&models.User{}, &models.Event{})
