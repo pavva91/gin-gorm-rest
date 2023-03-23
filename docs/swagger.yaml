@@ -1,0 +1,101 @@
+basePath: /api/v1
+definitions:
+  controllers.message:
+    properties:
+      message:
+        type: string
+    type: object
+  models.Event:
+    properties:
+      ID:
+        type: integer
+      category:
+        type: string
+      date:
+        type: string
+      description:
+        type: string
+      location:
+        type: string
+      organizer:
+        type: string
+      time:
+        type: string
+      title:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: List all the events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+      summary: List Events
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Create a new Event
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.message'
+      summary: Create Event
+      tags:
+      - events
+  /events/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get event by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.message'
+      summary: Get Event
+      tags:
+      - events
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

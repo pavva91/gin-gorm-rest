@@ -9,6 +9,8 @@ database:
 
 # Server configurations
 server:
+  api-path: "api"
+  api-version: "v1"
   cors-allowed-clients: ["http://localhost:5173"]
   environment: "dev"
   host: "localhost"

@@ -1,20 +1,44 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"os"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	// "github.com/gin-gonic/gin"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/pavva91/gin-gorm-rest/config"
-	"github.com/pavva91/gin-gorm-rest/routes"
+	"github.com/pavva91/gin-gorm-rest/db"
+	docs "github.com/pavva91/gin-gorm-rest/docs"
+	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/server"
+	// swaggerfiles "github.com/swaggo/files"
+	// ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+//	@BasePath	/api/v1
 
 // import "github.com/pavva91/gin-gorm-rest/routes"
 
+//	@title			Swagger Example API
+//	@version		1.0
+//	@description	This is a sample server celler server.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		localhost:8080
+//	@BasePath	/api/v1
+
+//	@securityDefinitions.basic	BasicAuth
+
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	// Setup config.yml
 	var cfg config.ServerConfig
 
 	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
@@ -22,40 +46,10 @@ func main() {
 		log.Println(err)
 	}
 
-	// https://yewtu.be/watch?v=ZI6HaPKHYsg
+	docs.SwaggerInfo.BasePath = fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
 
-	router := gin.Default()
+	db.ConnectToDB(cfg)
+	db.GetDB().AutoMigrate(&models.User{}, &models.Event{})
 
-	// CORS Configs
-	switch env := cfg.Server.Environment; env {
-	case "dev":
-		router.Use(cors.Default())
-	case "stage":
-		log.Println("TODO: Stage environment Setup, for now allow all CORS")
-		router.Use(cors.Default())
-	case "prod":
-		cors_config := cors.DefaultConfig()
-		cors_config.AllowOrigins = cfg.Server.CorsAllowedClients
-		router.Use(cors.New(cors_config))
-	default:
-		log.Println("Incorrect Dev Environment, interrupt execution")
-		os.Exit(1)
-	}
-	if cfg.Server.Environment == "dev" {
-		router.Use(cors.Default())
-	} else {
-		cors_config := cors.DefaultConfig()
-		cors_config.AllowOrigins = []string{"http://localhost:5173"}
-		router.Use(cors.New(cors_config))
-	}
-
-	config.ConnectToDB(cfg)
-
-	// add routes
-	routes.UserRoute(router)
-	routes.EventRoute(router)
-
-	// run router
-	// router.Run(":" + cfg.Server.Port)
-	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
+	server.Init(cfg)
 }
