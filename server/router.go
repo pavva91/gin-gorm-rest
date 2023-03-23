@@ -12,21 +12,24 @@ func NewRouter(apiVersion string) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	health := new(controllers.HealthController)
-
 	// Add routes
-	router.GET("/health", health.Status)
 	// TODO: Understand AuthMiddleware
 	// router.Use(middlewares.AuthMiddleware())
 
-	v1 := router.Group(apiVersion)
+	apiVersionGroup := router.Group(apiVersion)
 	{
-		usersGroup := v1.Group("users")
+		healthGroup := apiVersionGroup.Group("health")
+		{
+			health := new(controllers.HealthController)
+			healthGroup.GET("", health.Status)
+		}
+
+		usersGroup := apiVersionGroup.Group("users")
 		{
 			users := new(controllers.UserController)
 			usersGroup.GET("/:id", users.Retrieve)
 		}
-		eventsGroup := v1.Group("events")
+		eventsGroup := apiVersionGroup.Group("events")
 		{
 			// events := new(controllers.EventController)
 			// eventsGroup.GET("/:id", events.Retrieve)

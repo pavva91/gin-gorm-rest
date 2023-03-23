@@ -93,6 +93,21 @@ paths:
       summary: Get Event
       tags:
       - events
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check the status of the REST API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Check Status
+      tags:
+      - health
 securityDefinitions:
   BasicAuth:
     type: basic
