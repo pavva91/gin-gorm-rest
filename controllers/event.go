@@ -44,11 +44,12 @@ func ListEvents(c *gin.Context) {
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
+//	@Param event_id   path int true "Event ID"
 //	@Success		200	{object}	models.Event
 //
 //	@Failure		404	{object}	message
 //
-//	@Router			/events/{id} [get]
+//	@Router			/events/{event_id} [get]
 func GetEvent(c *gin.Context) {
 	// var event models.Event
 	eventId := c.Param("id")
@@ -86,26 +87,39 @@ type message struct {
 	Message string `json:"message"`
 }
 
-// ListEvents godoc
+// CreateEvent godoc
 //
 //	@Summary		Create Event
 //	@Description	Create a new Event
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
+//  @Param			request body models.Event true "The new Event Values in JSON"
 //	@Success		200	{object}	models.Event
-//
-//	@Failure		404	{object}	message
 //
 //	@Router			/events [post]
 func CreateEvent(c *gin.Context) {
 	var event models.Event
 	c.BindJSON(&event)
-	db.GetDB().Create(&event)
+	// db.GetDB().Create(&event)
+	eventModel.CreateEvent(&event)
 	// db.DB.Create(&event)
 	c.JSON(http.StatusOK, &event)
 }
 
+// DeleteEvent godoc
+//
+//	@Summary		Delete Event
+//	@Description	Delete event by id
+//	@Tags			events
+//	@Accept			json
+//	@Produce		json
+//	@Param event_id   path int true "Event ID"
+//	@Success		200	{object}	models.Event
+//
+//	@Failure		404	{object}	message
+//
+//	@Router			/events/{event_id} [delete]
 func DeleteEvent(c *gin.Context) {
 	var event models.Event
 	// db.DB.Where("id = ?", c.Param("id")).Delete(&event)

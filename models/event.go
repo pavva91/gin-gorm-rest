@@ -23,6 +23,12 @@ func (h Event) ListAllEvents() ([]Event, error) {
 	return events, nil
 }
 
+func (h Event) CreateEvent(*Event) (*Event, error) {
+	var event *Event
+	db.GetDB().Create(&event)
+	return event, nil
+}
+
 func (h Event) GetByID(id string) (*Event, error) {
 	var event *Event
 	db.GetDB().Where("id = ?", id).First(&event)

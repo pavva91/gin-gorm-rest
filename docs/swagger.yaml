@@ -31,13 +31,10 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: This is a sample server celler server.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
-  version: "1.0"
 paths:
   /events:
     get:
@@ -60,6 +57,34 @@ paths:
       consumes:
       - application/json
       description: Create a new Event
+      parameters:
+      - description: The new Event Values in JSON
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+      summary: Create Event
+      tags:
+      - events
+  /events/{event_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete event by id
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -71,14 +96,19 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/controllers.message'
-      summary: Create Event
+      summary: Delete Event
       tags:
       - events
-  /events/{id}:
     get:
       consumes:
       - application/json
       description: Get event by id
+      parameters:
+      - description: Event ID
+        in: path
+        name: event_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:

@@ -17,9 +17,6 @@ import (
 
 // import "github.com/pavva91/gin-gorm-rest/routes"
 
-//	@title			Swagger Example API
-//	@version		1.0
-//	@description	This is a sample server celler server.
 //	@termsOfService	http://swagger.io/terms/
 
 //	@contact.name	API Support
@@ -31,21 +28,29 @@ import (
 
 //	@securityDefinitions.basic	BasicAuth
 
-//	@externalDocs.description	OpenAPI
-//	@externalDocs.url			https://swagger.io/resources/open-api/
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	var cfg config.ServerConfig
 
+	// Get Config
 	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
 	if err != nil {
 		log.Println(err)
 	}
 
+	// Set Swagger Info
+	docs.SwaggerInfo.Title = "Swagger Example API"
+	docs.SwaggerInfo.Description = "Insert here REST API Description"
+	docs.SwaggerInfo.Version = "1.0"
 	docs.SwaggerInfo.BasePath = fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
 	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
+	// Connect to DB
 	db.ConnectToDB(cfg)
 	db.GetDB().AutoMigrate(&models.User{}, &models.Event{})
 
+	// Start Server
 	server.Init(cfg)
 }
