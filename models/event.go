@@ -23,8 +23,7 @@ func (h Event) ListAllEvents() ([]Event, error) {
 	return events, nil
 }
 
-func (h Event) CreateEvent(*Event) (*Event, error) {
-	var event *Event
+func (h Event) CreateEvent(event *Event) (*Event, error) {
 	db.GetDB().Create(&event)
 	return event, nil
 }
@@ -41,8 +40,7 @@ func (h Event) DeleteById(id string) (*Event, error) {
 	return event, nil
 }
 
-func (h Event) SaveEvent(*Event) (*Event, error) {
-	var event *Event
+func (h Event) SaveEvent(event *Event) (*Event, error) {
 	db.GetDB().Save(&event)
 	return event, nil
 }

@@ -3,7 +3,6 @@ package db
 import (
 	"fmt"
 
-	// "github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

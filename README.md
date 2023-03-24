@@ -34,17 +34,24 @@ Uses [Clean Env](https://github.com/ilyakaznacheev/cleanenv):
 - go get -u github.com/ilyakaznacheev/cleanenv
 
 ## Swagger Docs (Swag)
+
 Uses [Swag](https://github.com/swaggo/swag#how-to-use-it-with-gin)
+
 - go install github.com/swaggo/swag/cmd/swag@latest
-Note: Go install tries to install the package into $GOBIN, when $GOBIN=/usr/local/go/bin will not work, works with $GOBIN=~/go/bin
-Initialize Swag (on project root):
+  Note: Go install tries to install the package into $GOBIN, when $GOBIN=/usr/local/go/bin will not work, works with $GOBIN=~/go/bin
+  Initialize Swag (on project root):
 - `swag init`
-Then get dependencies:
+  Then get dependencies:
 - `go get -u github.com/swaggo/gin-swagger`
 - `go get -u github.com/swaggo/files`
 
 Format Swag Comments:
+
 - `swag fmt`
+
+## TODO: Error Handling
+
+## TODO: Understand router.Use(middlewares.AuthMiddleware())
 
 ## cURL Calls
 

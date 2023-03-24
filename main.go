@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	// "github.com/gin-gonic/gin"
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/pavva91/gin-gorm-rest/config"
 	"github.com/pavva91/gin-gorm-rest/db"
 	docs "github.com/pavva91/gin-gorm-rest/docs"
 	"github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/server"
-	// swaggerfiles "github.com/swaggo/files"
-	// ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // import "github.com/pavva91/gin-gorm-rest/routes"
@@ -33,7 +30,7 @@ import (
 func main() {
 	var cfg config.ServerConfig
 
-	// Get Config
+	// Get Configs
 	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
 	if err != nil {
 		log.Println(err)
@@ -51,6 +48,10 @@ func main() {
 	db.ConnectToDB(cfg)
 	db.GetDB().AutoMigrate(&models.User{}, &models.Event{})
 
+	// Create Router
+	router := server.NewRouter(cfg)
+
 	// Start Server
-	server.Init(cfg)
+	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
+
 }

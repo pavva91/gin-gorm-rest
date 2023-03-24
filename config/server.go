@@ -1,5 +1,6 @@
 package config
 
+// Model that links to config.yml file
 type ServerConfig struct {
 	Server struct {
 		ApiPath string `yaml:"api-path"  env:"API_PATH" env-description:"API base path"`

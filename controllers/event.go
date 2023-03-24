@@ -23,8 +23,6 @@ var eventModel = new(models.Event)
 //	@Router			/events [get]
 //	@Schemes
 func ListEvents(c *gin.Context) {
-	// events := []models.Event{}
-	// db.GetDB().Find(&events)
 	events, err := eventModel.ListAllEvents()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
@@ -55,7 +53,6 @@ func GetEvent(c *gin.Context) {
 	if eventId != "" {
 		_, err := strconv.ParseUint(eventId, 10, 64)
 		if err != nil {
-			// log.Fatal(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
 			return
 		}
@@ -66,13 +63,14 @@ func GetEvent(c *gin.Context) {
 			return
 		}
 
-		if event.ID == 0 {
+		if event.Id == 0 {
 			r := message{"No event found!"}
 			// c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No event found!"})
 			c.JSON(http.StatusNotFound, r)
 			return
 		} else {
-			c.JSON(http.StatusOK, gin.H{"message": "Event founded!", "event": event})
+			// c.JSON(http.StatusOK, gin.H{"message": "Event founded!", "event": event})
+			c.JSON(http.StatusOK, event)
 			return
 		}
 	}
@@ -88,21 +86,19 @@ type message struct {
 
 // CreateEvent godoc
 //
-//	@Summary		Create Event
-//	@Description	Create a new Event
-//	@Tags			events
-//	@Accept			json
-//	@Produce		json
-//  @Param			request body models.Event true "The new Event Values in JSON"
-//	@Success		200	{object}	models.Event
+//		@Summary		Create Event
+//		@Description	Create a new Event
+//		@Tags			events
+//		@Accept			json
+//		@Produce		json
+//	 @Param			request body models.Event true "The new Event Values in JSON"
+//		@Success		200	{object}	models.Event
 //
-//	@Router			/events [post]
+//		@Router			/events [post]
 func CreateEvent(c *gin.Context) {
 	var event models.Event
 	c.BindJSON(&event)
-	// db.GetDB().Create(&event)
 	eventModel.CreateEvent(&event)
-	// db.DB.Create(&event)
 	c.JSON(http.StatusOK, &event)
 }
 
@@ -122,30 +118,27 @@ func CreateEvent(c *gin.Context) {
 func DeleteEvent(c *gin.Context) {
 	var event models.Event
 	eventModel.DeleteById(c.Param("id"))
-	// db.GetDB().Where("id = ?", c.Param("id")).Delete(&event)
 	c.JSON(http.StatusOK, &event)
 }
 
 // SubstituteEvent godoc
 //
-//	@Summary		SubstituteEvent
-//	@Description	Substitute the Event completely with the new JSON body
-//	@Tags			events
-//	@Accept			json
-//	@Produce		json
-//	@Param event_id   path int true "Event ID"
-//  @Param			request body models.Event true "The new Event Values in JSON"
-//	@Success		200	{object}	models.Event
+//		@Summary		SubstituteEvent
+//		@Description	Substitute the Event completely with the new JSON body
+//		@Tags			events
+//		@Accept			json
+//		@Produce		json
+//		@Param event_id   path int true "Event ID"
+//	 @Param			request body models.Event true "The new Event Values in JSON"
+//		@Success		200	{object}	models.Event
 //
-//	@Failure		404	{object}	message
+//		@Failure		404	{object}	message
 //
-//	@Router			/events/{event_id} [put]
+//		@Router			/events/{event_id} [put]
 func SubstituteEvent(c *gin.Context) {
 	var event models.Event
 	eventModel.GetByID(c.Param("id"))
-	// db.GetDB().Where("id = ?", c.Param("id")).First(&event)
 	c.BindJSON(&event)
 	eventModel.SaveEvent(&event)
-	// db.GetDB().Save(&event)
 	c.JSON(http.StatusOK, &event)
 }
