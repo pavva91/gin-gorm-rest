@@ -1,4 +1,9 @@
 # MVC REST API and ORM Go Template
+Inspired by [go-gin-boilerplate](https://github.com/vsouza/go-gin-boilerplate) 
+for:
+  1. Swagger
+  2. Gin
+  3. Modular approach in go (no gorm dependency of controllers)
 
 Have a template for starting a REST API with ORM integration and hot reload with go air.
 
@@ -48,6 +53,9 @@ Uses [Swag](https://github.com/swaggo/swag#how-to-use-it-with-gin)
 Format Swag Comments:
 
 - `swag fmt`
+
+Swagger API:
+- `http://localhost:8080/swagger/index.html#/`
 
 ## TODO: Error Handling
 
