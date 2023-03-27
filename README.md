@@ -1,9 +1,11 @@
 # MVC REST API and ORM Go Template
-Inspired by [go-gin-boilerplate](https://github.com/vsouza/go-gin-boilerplate) 
+
+Inspired by [go-gin-boilerplate](https://github.com/vsouza/go-gin-boilerplate)
 for:
-  1. Swagger
-  2. Gin
-  3. Modular approach in go (no gorm dependency of controllers)
+
+1. Swagger
+2. Gin
+3. Modular approach in go (no gorm dependency of controllers)
 
 Have a template for starting a REST API with ORM integration and hot reload with go air.
 
@@ -55,9 +57,30 @@ Format Swag Comments:
 - `swag fmt`
 
 Swagger API:
+
 - `http://localhost:8080/swagger/index.html#/`
 
-## TODO: Error Handling
+## Error Handling
+
+Inspired by:
+
+- https://blog.depa.do/post/gin-validation-errors-handling
+
+### Logging
+
+Zero allocation JSON logger, [zerolog](https://github.com/rs/zerolog):
+
+- `go get -u github.com/rs/zerolog/log`
+
+### Go Validator
+
+Gin uses [Go Validator v10] (https://github.com/go-playground/validator):
+
+- `go get github.com/go-playground/validator/v10`
+
+In code import:
+
+- `import "github.com/go-playground/validator/v10" `
 
 ## TODO: Understand router.Use(middlewares.AuthMiddleware())
 

@@ -1,11 +1,15 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/pavva91/gin-gorm-rest/formatter"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/rs/zerolog/log"
 )
 
 type EventController struct{}
@@ -95,10 +99,41 @@ type message struct {
 //		@Router			/events [post]
 func CreateEvent(c *gin.Context) {
 	var event models.Event
-	c.BindJSON(&event)
+	// err := c.BindJSON(&event)
+	err := c.ShouldBind(&event)
+	if err != nil {
+		var verr validator.ValidationErrors
+		if errors.As(err, &verr) {
+			c.JSON(http.StatusBadRequest, gin.H{"errors": formatter.NewJSONFormatter().Descriptive(verr)})
+			return
+		}
+
+		// We now know that this error is not a validation error
+		// probably a malformed JSON
+		log.Info().Err(err).Msg("unable to bind")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+		return
+
+	}
+
+	// c.BindJSON(&event)
 	eventModel.CreateEvent(&event)
 	c.JSON(http.StatusOK, &event)
 }
+
+// func Simple(verr validator.ValidationErrors) map[string]string {
+// 	errs := make(map[string]string)
+//
+// 	for _, f := range verr {
+// 		err := f.ActualTag()
+// 		if f.Param() != "" {
+// 			err = fmt.Sprintf("%s=%s", err, f.Param())
+// 		}
+// 		errs[f.Field()] = err
+// 	}
+//
+// 	return errs
+// }
 
 // DeleteEvent godoc
 //
@@ -135,8 +170,36 @@ func DeleteEvent(c *gin.Context) {
 //		@Router			/events/{event_id} [put]
 func SubstituteEvent(c *gin.Context) {
 	var event models.Event
-	eventModel.GetByID(c.Param("id"))
-	c.BindJSON(&event)
-	eventModel.SaveEvent(&event)
-	c.JSON(http.StatusOK, &event)
+	eventId := c.Param("id")
+	if eventId != "" {
+		_, id_err := strconv.ParseUint(eventId, 10, 64)
+		if id_err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
+			return
+		}
+		eventModel.GetByID(c.Param("id"))
+		if event.Id == 0 {
+			r := message{"No event found!"}
+			// c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No event found!"})
+			c.JSON(http.StatusNotFound, r)
+			return
+		}
+		err := c.ShouldBind(&event)
+		if err != nil {
+			var verr validator.ValidationErrors
+			if errors.As(err, &verr) {
+				c.JSON(http.StatusBadRequest, gin.H{"errors": formatter.NewJSONFormatter().Descriptive(verr)})
+				return
+			}
+
+			// We now know that this error is not a validation error
+			// probably a malformed JSON
+			log.Info().Err(err).Msg("unable to bind")
+			c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
+			return
+
+		}
+		eventModel.SaveEvent(&event)
+		c.JSON(http.StatusOK, &event)
+	}
 }

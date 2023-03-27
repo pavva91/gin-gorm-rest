@@ -8,8 +8,8 @@ import (
 type Event struct {
 	gorm.Model  `swaggerignore:"true"`
 	Id          int    `json:"ID" gorm:"primary_key"`
-	Category    string `json:"category"`
-	Title       string `json:"title"`
+	Category    string `json:"category" binding:"required"`
+	Title       string `json:"title" binding:"required"`
 	Description string `json:"description"`
 	Location    string `json:"location"`
 	Date        string `json:"date"`
