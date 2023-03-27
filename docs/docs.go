@@ -115,7 +115,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -160,7 +160,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -196,7 +196,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -227,16 +227,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.message": {
+        "errorhandling.ErrorMessage": {
             "type": "object",
             "properties": {
-                "message": {
+                "error": {
                     "type": "string"
                 }
             }
         },
         "models.Event": {
             "type": "object",
+            "required": [
+                "category",
+                "title"
+            ],
             "properties": {
                 "ID": {
                     "type": "integer"

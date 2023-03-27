@@ -2,19 +2,22 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/pavva91/gin-gorm-rest/formatter"
+	"github.com/pavva91/gin-gorm-rest/errorhandling"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/validation"
 	"github.com/rs/zerolog/log"
 )
 
 type EventController struct{}
 
 var eventModel = new(models.Event)
+var validationController = new(validation.ValidationController)
 
 // ListEvents godoc
 //
@@ -45,16 +48,17 @@ func (ec EventController) ListEvents(c *gin.Context) {
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
-//	@Param event_id   path int true "Event ID"
-//	@Success		200	{object}	models.Event
-//	@Failure		404	{object}	message
+//	@Param			event_id	path		int	true	"Event ID"
+//	@Success		200			{object}	models.Event
+//	@Failure		404			{object}	errorhandling.ErrorMessage
 //	@Router			/events/{event_id} [get]
 func GetEvent(c *gin.Context) {
 	// var event models.Event
 	eventId := c.Param("id")
-	if eventId != "" {
-		_, err := strconv.ParseUint(eventId, 10, 64)
-		if err != nil {
+	// if eventId != "" {
+	if !validationController.IsEmpty(eventId) {
+		// _, err := strconv.ParseUint(eventId, 10, 64)
+		if !validationController.IsInt64(eventId) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
 			return
 		}
@@ -65,9 +69,8 @@ func GetEvent(c *gin.Context) {
 			return
 		}
 
-		if event.Id == 0 {
-			r := message{"No event found!"}
-			// c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No event found!"})
+		if validationController.IsZero(event.Id) {
+			r := errorhandling.SimpleErrorMessage{"No event found!"}
 			c.JSON(http.StatusNotFound, r)
 			return
 		} else {
@@ -81,22 +84,22 @@ func GetEvent(c *gin.Context) {
 	return
 }
 
-// message represents request response with a message
-type message struct {
-	Message string `json:"message"`
-}
+// ErrorMessage represents request response with a ErrorMessage
+// type ErrorMessage struct {
+// 	Message string `json:"error"`
+// }
 
 // CreateEvent godoc
 //
-//		@Summary		Create Event
-//		@Description	Create a new Event
-//		@Tags			events
-//		@Accept			json
-//		@Produce		json
-//	 @Param			request body models.Event true "The new Event Values in JSON"
-//		@Success		200	{object}	models.Event
+//	@Summary		Create Event
+//	@Description	Create a new Event
+//	@Tags			events
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.Event	true	"The new Event Values in JSON"
+//	@Success		200		{object}	models.Event
 //
-//		@Router			/events [post]
+//	@Router			/events [post]
 func CreateEvent(c *gin.Context) {
 	var event models.Event
 	// err := c.BindJSON(&event)
@@ -104,7 +107,7 @@ func CreateEvent(c *gin.Context) {
 	if err != nil {
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
-			c.JSON(http.StatusBadRequest, gin.H{"errors": formatter.NewJSONFormatter().Descriptive(verr)})
+			c.JSON(http.StatusBadRequest, gin.H{"errors": errorhandling.NewJSONFormatter().Descriptive(verr)})
 			return
 		}
 
@@ -142,10 +145,10 @@ func CreateEvent(c *gin.Context) {
 //	@Tags			events
 //	@Accept			json
 //	@Produce		json
-//	@Param event_id   path int true "Event ID"
-//	@Success		200	{object}	models.Event
+//	@Param			event_id	path		int	true	"Event ID"
+//	@Success		200			{object}	models.Event
 //
-//	@Failure		404	{object}	message
+//	@Failure		404			{object}	errorhandling.ErrorMessage
 //
 //	@Router			/events/{event_id} [delete]
 func DeleteEvent(c *gin.Context) {
@@ -156,39 +159,40 @@ func DeleteEvent(c *gin.Context) {
 
 // SubstituteEvent godoc
 //
-//		@Summary		SubstituteEvent
-//		@Description	Substitute the Event completely with the new JSON body
-//		@Tags			events
-//		@Accept			json
-//		@Produce		json
-//		@Param event_id   path int true "Event ID"
-//	 @Param			request body models.Event true "The new Event Values in JSON"
-//		@Success		200	{object}	models.Event
+//	@Summary		SubstituteEvent
+//	@Description	Substitute the Event completely with the new JSON body
+//	@Tags			events
+//	@Accept			json
+//	@Produce		json
+//	@Param			event_id	path		int				true	"Event ID"
+//	@Param			request		body		models.Event	true	"The new Event Values in JSON"
+//	@Success		200			{object}	models.Event
 //
-//		@Failure		404	{object}	message
+//	@Failure		404			{object}	errorhandling.ErrorMessage
 //
-//		@Router			/events/{event_id} [put]
+//	@Router			/events/{event_id} [put]
 func SubstituteEvent(c *gin.Context) {
-	var event models.Event
+	var newEvent models.Event
 	eventId := c.Param("id")
 	if eventId != "" {
-		_, id_err := strconv.ParseUint(eventId, 10, 64)
-		if id_err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
+		if !validationController.IsInt64(eventId) {
+			errorMessage := errorhandling.SimpleErrorMessage{fmt.Sprintf("Not valid event id: %s - Insert valid id", eventId)}
+			c.JSON(http.StatusBadRequest, errorMessage)
 			return
 		}
-		eventModel.GetByID(c.Param("id"))
-		if event.Id == 0 {
-			r := message{"No event found!"}
-			// c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No event found!"})
-			c.JSON(http.StatusNotFound, r)
+		oldEvent, _ := eventModel.GetByID(eventId)
+		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
+		if oldEvent.Id == 0 {
+			errorMessage := errorhandling.SimpleErrorMessage{"No event found!"}
+			c.JSON(http.StatusNotFound, errorMessage)
 			return
 		}
-		err := c.ShouldBind(&event)
+		err := c.ShouldBind(&newEvent)
 		if err != nil {
 			var verr validator.ValidationErrors
 			if errors.As(err, &verr) {
-				c.JSON(http.StatusBadRequest, gin.H{"errors": formatter.NewJSONFormatter().Descriptive(verr)})
+				errorMessage := errorhandling.ValidationErrorsMessage{errorhandling.NewJSONFormatter().Descriptive(verr)}
+				c.JSON(http.StatusBadRequest, errorMessage)
 				return
 			}
 
@@ -199,7 +203,10 @@ func SubstituteEvent(c *gin.Context) {
 			return
 
 		}
-		eventModel.SaveEvent(&event)
-		c.JSON(http.StatusOK, &event)
+
+		newEvent.Id = oldEvent.Id
+		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
+		eventModel.SaveEvent(&newEvent)
+		c.JSON(http.StatusOK, &newEvent)
 	}
 }

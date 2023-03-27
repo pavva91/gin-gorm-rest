@@ -103,7 +103,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -148,7 +148,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -184,7 +184,7 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.message"
+                            "$ref": "#/definitions/errorhandling.ErrorMessage"
                         }
                     }
                 }
@@ -215,16 +215,20 @@
         }
     },
     "definitions": {
-        "controllers.message": {
+        "errorhandling.ErrorMessage": {
             "type": "object",
             "properties": {
-                "message": {
+                "error": {
                     "type": "string"
                 }
             }
         },
         "models.Event": {
             "type": "object",
+            "required": [
+                "category",
+                "title"
+            ],
             "properties": {
                 "ID": {
                     "type": "integer"
