@@ -22,7 +22,7 @@ var eventModel = new(models.Event)
 //	@Success		200	{array}	models.Event
 //	@Router			/events [get]
 //	@Schemes
-func ListEvents(c *gin.Context) {
+func (ec EventController) ListEvents(c *gin.Context) {
 	events, err := eventModel.ListAllEvents()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
@@ -43,9 +43,7 @@ func ListEvents(c *gin.Context) {
 //	@Produce		json
 //	@Param event_id   path int true "Event ID"
 //	@Success		200	{object}	models.Event
-//
 //	@Failure		404	{object}	message
-//
 //	@Router			/events/{event_id} [get]
 func GetEvent(c *gin.Context) {
 	// var event models.Event

@@ -44,8 +44,8 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 	{
 		healthGroup := apiVersionGroup.Group("health")
 		{
-			health := new(controllers.HealthController)
-			healthGroup.GET("", health.Status)
+			healthController := new(controllers.HealthController)
+			healthGroup.GET("", healthController.Status)
 		}
 
 		usersGroup := apiVersionGroup.Group("users")
@@ -55,10 +55,9 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		}
 		eventsGroup := apiVersionGroup.Group("events")
 		{
-			// events := new(controllers.EventController)
-			// eventsGroup.GET("/:id", events.Retrieve)
-			eventsGroup.GET("", controllers.ListEvents)
-			eventsGroup.GET("/", controllers.ListEvents)
+			eventsController := new(controllers.EventController)
+			eventsGroup.GET("", eventsController.ListEvents)
+			eventsGroup.GET("/", eventsController.ListEvents)
 			eventsGroup.GET("/:id", controllers.GetEvent)
 			eventsGroup.POST("/", controllers.CreateEvent)
 			eventsGroup.DELETE("/:id", controllers.DeleteEvent)
