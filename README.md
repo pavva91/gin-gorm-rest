@@ -34,6 +34,27 @@ Usage of air:
    - `go run main.go`
    - `go run main.go server_config.go`
 
+## JWT Authentication
+
+Check JWT token [decoder] (https://jwt.io/)
+Dependencies:
+
+- go get github.com/dgrijalva/jwt-go (deprecated)
+- go get -u github.com/golang-jwt/jwt/v5 (up to date)
+- go get golang.org/x/crypto/bcrypt
+
+1. Authenticate (create JWT token for the user account):
+
+- `curl -X POST http://127.0.0.1:8080/api/v1/token -d '{"email":"alice@gmail.com", "password":"1234"}'`
+  Response:
+  `{
+   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsaWNlODkiLCJlbWFpbCI6ImFsaWNlQGdtYWlsLmNvbSIsImV4cCI6MTY4MDI2MDU2OH0.6d9-WiCQTAcs4wxIkqHyQ3J0-UZBEr2_swpdUcO7zRc"
+ }`
+
+2. Authorized Call:
+
+- `curl -X GET http://127.0.0.1:8080/api/v1/secured/ping -H 'Accept: application/json' -H 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFsaWNlODkiLCJlbWFpbCI6ImFsaWNlQGdtYWlsLmNvbSIsImV4cCI6MTY4MDI2MDU2OH0.6d9-WiCQTAcs4wxIkqHyQ3J0-UZBEr2_swpdUcO7zRc'`
+
 ## Config YAML
 
 Uses [Clean Env](https://github.com/ilyakaznacheev/cleanenv):

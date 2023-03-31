@@ -25,6 +25,10 @@ func ConnectToDB(cfg config.ServerConfig) {
 	database = db
 }
 
+// func Migrate() {
+// 	database.AutoMigrate(&models.User{}, &models.Event{})
+// }
+
 func GetDB() *gorm.DB {
 	return database
 }

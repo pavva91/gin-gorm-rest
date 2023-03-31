@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/config"
 	"github.com/pavva91/gin-gorm-rest/controllers"
+	"github.com/pavva91/gin-gorm-rest/middlewares"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -35,25 +36,33 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		log.Printf("Incorrect Dev Environment: %s\nInterrupt execution", env)
 		os.Exit(1)
 	}
-	
+
 	// Add routes
 	// TODO: Understand AuthMiddleware
 	// router.Use(middlewares.AuthMiddleware())
 
-	apiVersionGroup := router.Group(apiVersion)
+	api := router.Group(apiVersion)
 	{
-		healthGroup := apiVersionGroup.Group("health")
+		api.POST("/token", controllers.GenerateToken)
+		secured := api.Group("secured").Use(middlewares.Auth())
+		{
+		}
+
+		healthGroup := api.Group("health")
 		{
 			healthController := new(controllers.HealthController)
 			healthGroup.GET("", healthController.Status)
+			// api.GET("/ping", healthController.Ping)
+			secured.GET("/ping", healthController.Ping)
 		}
 
-		usersGroup := apiVersionGroup.Group("users")
+		usersGroup := api.Group("users")
 		{
 			users := new(controllers.UserController)
 			usersGroup.GET("/:id", users.Retrieve)
+			usersGroup.POST("", controllers.RegisterUser)
 		}
-		eventsGroup := apiVersionGroup.Group("events")
+		eventsGroup := api.Group("events")
 		{
 			eventsController := new(controllers.EventController)
 			eventsGroup.GET("", eventsController.ListEvents)

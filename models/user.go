@@ -2,14 +2,15 @@ package models
 
 import (
 	"github.com/pavva91/gin-gorm-rest/db"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	Id       int    `json:"ID" gorm:"primary_key"`
 	Name     string `json:"name"`
-	Email    string `json:"email"`
+	Username string `json:"username" gorm:"unique"`
+	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"password"`
 }
 
@@ -17,4 +18,20 @@ func (h User) GetByID(id string) (*User, error) {
 	var user *User
 	db.GetDB().Where("id = ?", id).First(&user)
 	return user, nil
+}
+
+func (user *User) HashPassword(password string) error {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return err
+	}
+	user.Password = string(bytes)
+	return nil
+}
+func (user *User) CheckPassword(providedPassword string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(providedPassword))
+	if err != nil {
+		return err
+	}
+	return nil
 }

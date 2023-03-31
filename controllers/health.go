@@ -19,3 +19,7 @@ type HealthController struct{}
 func (h HealthController) Status(c *gin.Context) {
 	c.String(http.StatusOK, "Working!")
 }
+
+func (h HealthController) Ping(context *gin.Context) {
+	context.JSON(http.StatusOK, gin.H{"message": "pong"})
+}
