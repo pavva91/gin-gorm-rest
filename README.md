@@ -36,7 +36,6 @@ Usage of air:
 
 ## JWT Authentication
 
-TODO: [upgrade to v5](https://github.com/golang-jwt/jwt/blob/main/MIGRATION_GUIDE.md)
 Tutorial: [https://codewithmukesh.com/blog/jwt-authentication-in-golang/](https://codewithmukesh.com/blog/jwt-authentication-in-golang/)
 Check JWT token [decoder](https://jwt.io/)
 Dependencies:

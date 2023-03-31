@@ -2,7 +2,7 @@ package auth
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
