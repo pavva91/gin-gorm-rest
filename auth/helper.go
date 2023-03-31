@@ -2,9 +2,8 @@ package auth
 
 import (
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtKey = []byte("supersecretkey")
