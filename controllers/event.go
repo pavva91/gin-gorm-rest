@@ -70,7 +70,7 @@ func GetEvent(c *gin.Context) {
 		}
 
 		if validationController.IsZero(event.Id) {
-			r := errorhandling.SimpleErrorMessage{"No event found!"}
+			r := errorhandling.SimpleErrorMessage{Message: "No event found!"}
 			c.JSON(http.StatusNotFound, r)
 			return
 		} else {
@@ -176,14 +176,14 @@ func SubstituteEvent(c *gin.Context) {
 	eventId := c.Param("id")
 	if eventId != "" {
 		if !validationController.IsInt64(eventId) {
-			errorMessage := errorhandling.SimpleErrorMessage{fmt.Sprintf("Not valid event id: %s - Insert valid id", eventId)}
+			errorMessage := errorhandling.SimpleErrorMessage{Message: fmt.Sprintf("Not valid event id: %s - Insert valid id", eventId)}
 			c.JSON(http.StatusBadRequest, errorMessage)
 			return
 		}
 		oldEvent, _ := eventModel.GetByID(eventId)
 		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
 		if oldEvent.Id == 0 {
-			errorMessage := errorhandling.SimpleErrorMessage{"No event found!"}
+			errorMessage := errorhandling.SimpleErrorMessage{Message: "No event found!"}
 			c.JSON(http.StatusNotFound, errorMessage)
 			return
 		}
@@ -191,7 +191,7 @@ func SubstituteEvent(c *gin.Context) {
 		if err != nil {
 			var verr validator.ValidationErrors
 			if errors.As(err, &verr) {
-				errorMessage := errorhandling.ValidationErrorsMessage{errorhandling.NewJSONFormatter().Descriptive(verr)}
+				errorMessage := errorhandling.ValidationErrorsMessage{Message: errorhandling.NewJSONFormatter().Descriptive(verr)}
 				c.JSON(http.StatusBadRequest, errorMessage)
 				return
 			}
