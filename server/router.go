@@ -52,7 +52,9 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		{
 			healthController := new(controllers.HealthController)
 			healthGroup.GET("", healthController.Status)
-			// api.GET("/ping", healthController.Ping)
+			// unsecured
+			api.GET("/ping", healthController.Ping)
+			// secured
 			secured.GET("/ping", healthController.Ping)
 		}
 
