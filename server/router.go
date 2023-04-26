@@ -45,7 +45,6 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 	{
 		// unsecured calls
 		api.POST("/token", controllers.GenerateToken)
-		api.POST("/users", controllers.RegisterUser)
 
 		// secured calls
 		secured := api.Group("secured").Use(middlewares.Auth())
@@ -64,8 +63,11 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 
 		usersGroup := api.Group("users")
 		{
-			users := new(controllers.UserController)
-			usersGroup.GET("/:id", users.Retrieve)
+			usersController := new(controllers.UserController)
+			usersGroup.POST("", usersController.RegisterUser)
+			usersGroup.GET("", usersController.ListUsers)
+			usersGroup.GET("/", usersController.ListUsers)
+			usersGroup.GET("/:id", usersController.GetUser)
 		}
 		eventsGroup := api.Group("events")
 		{
@@ -74,7 +76,7 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 			eventsGroup.GET("/", eventsController.ListEvents)
 			eventsGroup.GET("/:id", controllers.GetEvent)
 		}
-		securedEventsGroup := api.Group("events").Use(middlewares.Auth()) 
+		securedEventsGroup := eventsGroup.Use(middlewares.Auth()) 
 		{
 			securedEventsGroup.POST("/", controllers.CreateEvent)
 			securedEventsGroup.DELETE("/:id", controllers.DeleteEvent)
