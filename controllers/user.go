@@ -16,7 +16,7 @@ type UserController struct{}
 
 var userModel = new(models.User)
 
-func RegisterUser(c *gin.Context) {
+func (u UserController) RegisterUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		var verr validator.ValidationErrors
@@ -49,7 +49,7 @@ func RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, &user)
 }
 
-func (u UserController) Retrieve(c *gin.Context) {
+func (u UserController) GetUser(c *gin.Context) {
 	if c.Param("id") != "" {
 		user, err := userModel.GetByID(c.Param("id"))
 		if err != nil {
@@ -65,7 +65,7 @@ func (u UserController) Retrieve(c *gin.Context) {
 	return
 }
 
-func ListUsers(c *gin.Context) {
+func (u UserController) ListUsers(c *gin.Context) {
 	users := []models.User{}
 	db.GetDB().Find(&users)
 	c.JSON(200, &users)
