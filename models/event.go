@@ -15,6 +15,7 @@ type Event struct {
 	Date        string `json:"date"`
 	Time        string `json:"time"`
 	Organizer   string `json:"organizer"`
+	UserID		int    `json:"creator"`
 }
 
 func (h Event) ListAllEvents() ([]Event, error) {
