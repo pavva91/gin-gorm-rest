@@ -43,7 +43,11 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 
 	api := router.Group(apiVersion)
 	{
+		// unsecured calls
 		api.POST("/token", controllers.GenerateToken)
+		api.POST("/users", controllers.RegisterUser)
+
+		// secured calls
 		secured := api.Group("secured").Use(middlewares.Auth())
 		{
 		}
@@ -62,7 +66,6 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		{
 			users := new(controllers.UserController)
 			usersGroup.GET("/:id", users.Retrieve)
-			usersGroup.POST("", controllers.RegisterUser)
 		}
 		eventsGroup := api.Group("events")
 		{
