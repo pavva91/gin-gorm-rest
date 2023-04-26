@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/pavva91/gin-gorm-rest/auth"
 	"github.com/pavva91/gin-gorm-rest/errorhandling"
 	"github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/validation"
@@ -102,8 +103,20 @@ func GetEvent(c *gin.Context) {
 //	@Router			/events [post]
 func CreateEvent(c *gin.Context) {
 	var event models.Event
-	// err := c.BindJSON(&event)
-	err := c.ShouldBind(&event)
+	var userModel models.User
+
+	tokenString := c.GetHeader("Authorization")
+
+	claims, err := auth.DecodeJWT(tokenString)
+	if err != nil {
+		log.Err(err).Msg("Unable to Decode JWT Token")
+	}
+
+	log.Info().Msg("Username: " + claims.Username)
+	user, err := userModel.GetByUsername(claims.Username)
+	event.UserID = int(user.ID)
+
+	err = c.ShouldBind(&event)
 	if err != nil {
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
@@ -119,7 +132,6 @@ func CreateEvent(c *gin.Context) {
 
 	}
 
-	// c.BindJSON(&event)
 	eventModel.CreateEvent(&event)
 	c.JSON(http.StatusOK, &event)
 }
