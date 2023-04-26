@@ -21,6 +21,12 @@ func (h User) GetByID(id string) (*User, error) {
 	return user, nil
 }
 
+func (h User) GetByUsername(username string) (*User, error) {
+	var user *User
+	db.GetDB().Where("username = ?", username).First(&user)
+	return user, nil
+}
+
 func (user *User) HashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
