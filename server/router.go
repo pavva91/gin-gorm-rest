@@ -73,10 +73,14 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 			eventsGroup.GET("", eventsController.ListEvents)
 			eventsGroup.GET("/", eventsController.ListEvents)
 			eventsGroup.GET("/:id", controllers.GetEvent)
-			eventsGroup.POST("/", controllers.CreateEvent)
-			eventsGroup.DELETE("/:id", controllers.DeleteEvent)
-			eventsGroup.PUT("/:id", controllers.SubstituteEvent)
 		}
+		securedEventsGroup := api.Group("events").Use(middlewares.Auth()) 
+		{
+			securedEventsGroup.POST("/", controllers.CreateEvent)
+			securedEventsGroup.DELETE("/:id", controllers.DeleteEvent)
+			securedEventsGroup.PUT("/:id", controllers.SubstituteEvent)
+		}
+
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
