@@ -112,8 +112,25 @@ In code import:
 ## Tests
 
 - `go get -u github.com/stretchr/testify`
-- `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+- Run all tests: `go test ./...`
+- Run tests of a folder (e.g. validation): `go test ./validation`
+- Run tests of a module (e.g. validation): `go test github.com/pavva91/gin-gorm-rest/validation`
 
+### Code Coverage
+- By package name: 
+  - Just run: `go test -cover github.com/pavva91/gin-gorm-rest/validation`
+  - Create coverage file: `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+- By folder:
+  - Just run: `go test -cover ./validation`
+  - Create coverage file: `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+  - Open coverage file on browser: `go tool cover -html=cover.out`
+
+- Run all tests:
+  - Just run: `go test ./... -cover`
+  - Create coverage file: `go test ./... -coverprofile coverage.out`
+  - Open coverage file on browser: `go tool cover -html=coverage.out`
+
+From [stack overflow](https://stackoverflow.com/questions/10516662/how-to-measure-test-coverage-in-go)
 1. Create function in ~/.bashrc and/or ~/.zshrc:
   ```bash
   cover () {
