@@ -76,7 +76,7 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 			eventsGroup.GET("/", eventsController.ListEvents)
 			eventsGroup.GET("/:id", controllers.GetEvent)
 		}
-		securedEventsGroup := eventsGroup.Use(middlewares.Auth()) 
+		securedEventsGroup := eventsGroup.Use(middlewares.Auth())
 		{
 			securedEventsGroup.POST("/", controllers.CreateEvent)
 			securedEventsGroup.DELETE("/:id", controllers.DeleteEvent)

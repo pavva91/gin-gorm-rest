@@ -5,6 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 )
+
 type ValidationController struct{}
 
 func (vc ValidationController) IsInt64(id string) (isInt64 bool) {
