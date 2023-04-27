@@ -21,6 +21,11 @@ Uses [Gin-Gonic](https://gin-gonic.com/docs/)
 
 Uses [GORM](https://gorm.io/)
 
+## Format Code
+
+1. cd ~/go/src/github.com/pavva91/gin-gorm-rest/
+2. gofmt -l -s -w .
+
 ## Hot Reload (air)
 
 [Go Air](https://github.com/cosmtrek/air) enables hot reloading in go.
@@ -104,7 +109,8 @@ In code import:
 
 - `import "github.com/go-playground/validator/v10" `
 
-## TODO: Understand router.Use(middlewares.AuthMiddleware())
+## Tests
+- `go get -u github.com/stretchr/testify`
 
 ## cURL Calls
 
