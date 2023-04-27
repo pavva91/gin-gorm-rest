@@ -110,7 +110,20 @@ In code import:
 - `import "github.com/go-playground/validator/v10" `
 
 ## Tests
+
 - `go get -u github.com/stretchr/testify`
+- `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+
+1. Create function in ~/.bashrc and/or ~/.zshrc:
+  ```bash
+  cover () {
+    t="/tmp/go-cover.$$.tmp"
+    go test -coverprofile=$t $@ && go tool cover -html=$t && unlink $t
+  }
+  ```
+2. Call this function: 
+  - `cd ~/go/src/github.com/pavva91/gin-gorm-rest/ `
+  - `cover github.com/pavva91/gin-gorm-rest/validation`
 
 ## cURL Calls
 
