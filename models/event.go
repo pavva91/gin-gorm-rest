@@ -18,12 +18,6 @@ type Event struct {
 	UserID      int    `json:"creator" binding:"required" swaggerignore:"true"`
 }
 
-func (h Event) ListAllEvents() ([]Event, error) {
-	var events []Event
-	db.GetDB().Find(&events)
-	return events, nil
-}
-
 func (h Event) CreateEvent(event *Event) (*Event, error) {
 	db.GetDB().Create(&event)
 	return event, nil
