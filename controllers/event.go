@@ -11,14 +11,31 @@ import (
 	"github.com/pavva91/gin-gorm-rest/auth"
 	"github.com/pavva91/gin-gorm-rest/errorhandling"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/services"
 	"github.com/pavva91/gin-gorm-rest/validation"
 	"github.com/rs/zerolog/log"
 )
 
-type EventController struct{}
+var (
+	EventController = eventController{}
+)
+
+type eventController struct{}
 
 var eventModel = new(models.Event)
 var validationController = new(validation.ValidationController)
+
+func (controller eventController) ListE(context *gin.Context) {
+	events, err := services.EventService.ListAllEvents()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
+		context.Abort()
+		return
+	}
+	context.JSON(http.StatusOK, &events)
+	context.Abort()
+	return
+}
 
 // ListEvents godoc
 //
@@ -30,19 +47,20 @@ var validationController = new(validation.ValidationController)
 //	@Success		200	{array}	models.Event
 //	@Router			/events [get]
 //	@Schemes
-func (ec EventController) ListEvents(c *gin.Context) {
-	events, err := eventModel.ListAllEvents()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
-		c.Abort()
-		return
-	}
-	c.JSON(http.StatusOK, &events)
-	c.Abort()
-	return
-}
 
-// ListEvents godoc
+// func (ec eventController) ListEvents(c *gin.Context) {
+// 	events, err := eventModel.ListAllEvents()
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
+// 		c.Abort()
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, &events)
+// 	c.Abort()
+// 	return
+// }
+
+// GetEvent godoc
 //
 //	@Summary		Get Event
 //	@Description	Get event by id
