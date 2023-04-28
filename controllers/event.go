@@ -25,18 +25,6 @@ type eventController struct{}
 var eventModel = new(models.Event)
 var validationController = new(validation.ValidationController)
 
-func (controller eventController) ListE(context *gin.Context) {
-	events, err := services.EventService.ListAllEvents()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
-		context.Abort()
-		return
-	}
-	context.JSON(http.StatusOK, &events)
-	context.Abort()
-	return
-}
-
 // ListEvents godoc
 //
 //	@Summary		List Events
@@ -47,18 +35,17 @@ func (controller eventController) ListE(context *gin.Context) {
 //	@Success		200	{array}	models.Event
 //	@Router			/events [get]
 //	@Schemes
-
-// func (ec eventController) ListEvents(c *gin.Context) {
-// 	events, err := eventModel.ListAllEvents()
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
-// 		c.Abort()
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, &events)
-// 	c.Abort()
-// 	return
-// }
+func (controller eventController) ListEvents(context *gin.Context) {
+	events, err := services.EventService.ListAllEvents()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
+		context.Abort()
+		return
+	}
+	context.JSON(http.StatusOK, &events)
+	context.Abort()
+	return
+}
 
 // GetEvent godoc
 //
@@ -71,7 +58,7 @@ func (controller eventController) ListE(context *gin.Context) {
 //	@Success		200			{object}	models.Event
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //	@Router			/events/{event_id} [get]
-func GetEvent(c *gin.Context) {
+func (controller eventController) GetEvent(c *gin.Context) {
 	// var event models.Event
 	eventId := c.Param("id")
 	// if eventId != "" {
@@ -81,7 +68,7 @@ func GetEvent(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
 			return
 		}
-		event, err := eventModel.GetByID(eventId)
+		event, err := services.EventService.GetById(eventId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": err})
 			c.Abort()
@@ -119,7 +106,7 @@ func GetEvent(c *gin.Context) {
 //	@Success		200		{object}	models.Event
 //
 //	@Router			/events [post]
-func CreateEvent(c *gin.Context) {
+func (controller eventController) CreateEvent(c *gin.Context) {
 	var event models.Event
 	var userModel models.User
 
@@ -150,7 +137,7 @@ func CreateEvent(c *gin.Context) {
 
 	}
 
-	eventModel.CreateEvent(&event)
+	services.EventService.CreateEvent(&event)
 	c.JSON(http.StatusOK, &event)
 }
 
@@ -181,9 +168,9 @@ func CreateEvent(c *gin.Context) {
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //
 //	@Router			/events/{event_id} [delete]
-func DeleteEvent(c *gin.Context) {
+func (controller eventController) DeleteEvent(c *gin.Context) {
 	var event models.Event
-	eventModel.DeleteById(c.Param("id"))
+	services.EventService.DeleteById(c.Param("id"))
 	c.JSON(http.StatusOK, &event)
 }
 
@@ -201,7 +188,7 @@ func DeleteEvent(c *gin.Context) {
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //
 //	@Router			/events/{event_id} [put]
-func SubstituteEvent(c *gin.Context) {
+func (controller eventController) SubstituteEvent(c *gin.Context) {
 	var newEvent models.Event
 	eventId := c.Param("id")
 	if eventId != "" {
@@ -210,7 +197,7 @@ func SubstituteEvent(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, errorMessage)
 			return
 		}
-		oldEvent, _ := eventModel.GetByID(eventId)
+		oldEvent, _ := services.EventService.GetById(eventId)
 		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
 		if oldEvent.Id == 0 {
 			errorMessage := errorhandling.SimpleErrorMessage{Message: "No event found!"}
@@ -236,7 +223,7 @@ func SubstituteEvent(c *gin.Context) {
 
 		newEvent.Id = oldEvent.Id
 		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
-		eventModel.SaveEvent(&newEvent)
+		services.EventService.SaveEvent(&newEvent)
 		c.JSON(http.StatusOK, &newEvent)
 	}
 }
