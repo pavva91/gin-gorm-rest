@@ -15,12 +15,12 @@ var validationController = new(ValidationController)
 // returns the current testing context
 type ValidationTestSuite struct {
 	suite.Suite
-	Int64String string
+	Int64String    string
 	NonInt64String string
-	EmptyString string
+	EmptyString    string
 	NonEmptyString string
-	ZeroString int
-	NonZeroString int
+	ZeroString     int
+	NonZeroString  int
 }
 
 // MyMockedObject is a mocked object that implements an interface

@@ -42,7 +42,7 @@ func TestPingPongUnsecured(t *testing.T) {
 
 	// Perform a GET request with that handler.
 	// w := performRequest(router, "GET", "/api/v1/ping")
-	w := performRequest(router, "GET", apiVersion + "/ping")
+	w := performRequest(router, "GET", apiVersion+"/ping")
 
 	// Assert we encoded correctly,
 	// the request gives a 200
@@ -78,12 +78,12 @@ func TestPingPongSecuredWithoutJWT(t *testing.T) {
 
 	// Perform a GET request with that handler.
 	// w := performRequest(router, "GET", "/api/v1/ping")
-	w := performRequest(router, "GET", apiVersion + "/secured/ping")
+	w := performRequest(router, "GET", apiVersion+"/secured/ping")
 
 	// Assert we encoded correctly,
 	// the request gives a 400
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	
+
 	// Convert the JSON response to a map
 	var response map[string]string
 	err = json.Unmarshal([]byte(w.Body.String()), &response)

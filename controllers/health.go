@@ -9,7 +9,6 @@ type healthController struct{}
 
 var (
 	HealthController = healthController{}
-
 )
 
 // HealthController godoc

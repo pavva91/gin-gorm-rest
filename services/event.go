@@ -26,4 +26,3 @@ func (service eventServiceImpl) ListAllEvents() ([]models.Event, error) {
 	db.GetDB().Find(&events)
 	return events, nil
 }
-

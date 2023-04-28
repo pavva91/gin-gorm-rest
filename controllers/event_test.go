@@ -22,7 +22,7 @@ func (mock eventServiceMock) ListAllEvents() ([]models.Event, error) {
 
 func Test_ListEvents_Error_Error(t *testing.T) {
 	expectedHttpStatus := http.StatusInternalServerError
-    expectedHttpBody := "{\"error\":{},\"message\":\"Error to list events\"}"
+	expectedHttpBody := "{\"error\":{},\"message\":\"Error to list events\"}"
 
 	serviceMock := eventServiceMock{}
 	serviceMock.listEventsFn = func() ([]models.Event, error) {
