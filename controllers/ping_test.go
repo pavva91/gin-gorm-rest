@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/pavva91/gin-gorm-rest/services"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/pavva91/gin-gorm-rest/services"
 )
 
 type pingServiceMock struct {
@@ -39,6 +40,10 @@ func TestPingWithError(t *testing.T) {
 }
 
 func TestPingNoError(t *testing.T) {
+
+	expectedHttpStatus := http.StatusOK
+	expectedHttpBody := "{\"message\":\"pong\"}"
+
 	serviceMock := pingServiceMock{}
 	serviceMock.handlePingFn = func() (string, error) {
 		return "pong", nil
@@ -50,11 +55,14 @@ func TestPingNoError(t *testing.T) {
 
 	PingController.Ping(context)
 
-	if response.Code != http.StatusOK {
+	// assert.Equal(suite.T(), actualHttpStatus, expectedHttpStatus)
+	// assert.Equal(suite.T(), actualHttpBody, expectedHttpBody)
+
+	if response.Code != expectedHttpStatus {
 		t.Error("response code should be 200")
 	}
 
-	if response.Body.String() != "pong" {
+	if response.Body.String() != expectedHttpBody {
 		t.Error("response body should say 'pong'")
 	}
 }
