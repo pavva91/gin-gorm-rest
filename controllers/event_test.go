@@ -13,11 +13,31 @@ import (
 )
 
 type eventServiceMock struct {
-	listEventsFn func() ([]models.Event, error)
+	listEventsFn  func() ([]models.Event, error)
+	createEventFn func() (*models.Event, error)
+	getByIdFn     func() (*models.Event, error)
+	deleteByIdFn  func() (*models.Event, error)
+	saveEventFn   func() (*models.Event, error)
 }
 
 func (mock eventServiceMock) ListAllEvents() ([]models.Event, error) {
 	return mock.listEventsFn()
+}
+
+func (mock eventServiceMock) CreateEvent(event *models.Event) (*models.Event, error) {
+	return mock.createEventFn()
+}
+
+func (mock eventServiceMock) GetById(id string) (*models.Event, error) {
+	return mock.getByIdFn()
+}
+
+func (mock eventServiceMock) DeleteById(id string) (*models.Event, error) {
+	return mock.deleteByIdFn()
+}
+
+func (mock eventServiceMock) SaveEvent(event *models.Event) (*models.Event, error) {
+	return mock.saveEventFn()
 }
 
 func Test_ListEvents_Error_Error(t *testing.T) {
@@ -33,7 +53,7 @@ func Test_ListEvents_Error_Error(t *testing.T) {
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	EventController.ListE(context)
+	EventController.ListEvents(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -57,7 +77,7 @@ func Test_ListEvents_Empty_Empty(t *testing.T) {
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	EventController.ListE(context)
+	EventController.ListEvents(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
