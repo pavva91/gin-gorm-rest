@@ -10,8 +10,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var healthController = new(HealthController)
-
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
 // returns the current testing context
@@ -36,24 +34,10 @@ func (suite *HealthTestSuite) Test_Status_Return200() {
 	expectedHttpStatus := http.StatusOK
 	expectedHttpBody := "Working!"
 
-	healthController.Status(suite.GinContextPointer)
+	HealthController.Status(suite.GinContextPointer)
 
 	actualHttpStatus := suite.GinContextPointer.Writer.Status()
 	actualHttpBody := suite.Response.Body.String()
-
-	assert.Equal(suite.T(), actualHttpStatus, expectedHttpStatus)
-	assert.Equal(suite.T(), actualHttpBody, expectedHttpBody)
-}
-
-func (suite *HealthTestSuite) Test_Ping_Return200() {
-	expectedHttpStatus := http.StatusOK
-	expectedHttpBody := "{\"message\":\"pong\"}"
-
-	healthController.Ping(suite.GinContextPointer)
-
-	actualHttpStatus := suite.GinContextPointer.Writer.Status()
-	actualHttpBody := suite.Response.Body.String()
-	// actualHttpBody, _ := json.Marshal(suite.W.Body.String())
 
 	assert.Equal(suite.T(), actualHttpStatus, expectedHttpStatus)
 	assert.Equal(suite.T(), actualHttpBody, expectedHttpBody)
