@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,22 +20,16 @@ type HealthTestSuite struct {
 	GinContextPointer  *gin.Context
 	GinEnginePointer   *gin.Engine
 	HttpResponseWriter http.ResponseWriter
-	W                  *httptest.ResponseRecorder
-}
-
-// MyMockedObject is a mocked object that implements an interface
-// that describes an object that the code I am testing relies on.
-type Event struct {
-	mock.Mock
+	Response           *httptest.ResponseRecorder
 }
 
 // Setup Stub Values
 func (suite *HealthTestSuite) SetupTest() {
 	// not strictly required to unit test (will run also without this line)
 	gin.SetMode(gin.TestMode)
-	suite.W = httptest.NewRecorder()
+	suite.Response = httptest.NewRecorder()
 
-	suite.GinContextPointer, _ = gin.CreateTestContext(suite.W)
+	suite.GinContextPointer, _ = gin.CreateTestContext(suite.Response)
 }
 
 func (suite *HealthTestSuite) Test_Status_Return200() {
@@ -46,7 +39,7 @@ func (suite *HealthTestSuite) Test_Status_Return200() {
 	healthController.Status(suite.GinContextPointer)
 
 	actualHttpStatus := suite.GinContextPointer.Writer.Status()
-	actualHttpBody := suite.W.Body.String()
+	actualHttpBody := suite.Response.Body.String()
 
 	assert.Equal(suite.T(), actualHttpStatus, expectedHttpStatus)
 	assert.Equal(suite.T(), actualHttpBody, expectedHttpBody)
@@ -59,7 +52,7 @@ func (suite *HealthTestSuite) Test_Ping_Return200() {
 	healthController.Ping(suite.GinContextPointer)
 
 	actualHttpStatus := suite.GinContextPointer.Writer.Status()
-	actualHttpBody := suite.W.Body.String()
+	actualHttpBody := suite.Response.Body.String()
 	// actualHttpBody, _ := json.Marshal(suite.W.Body.String())
 
 	assert.Equal(suite.T(), actualHttpStatus, expectedHttpStatus)
