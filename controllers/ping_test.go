@@ -2,6 +2,7 @@ package controllers
 
 import (
 	// "errors"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -38,52 +39,70 @@ func (suite *PingTestSuite) SetupTest() {
 	suite.GinContextPointer, _ = gin.CreateTestContext(suite.W)
 }
 
-// func TestPingWithError(t *testing.T) {
-// 	serviceMock := pingServiceMock{}
-// 	serviceMock.handlePingFn = func() (string, error) {
-// 		return "", errors.New("error executing ping")
-// 	}
-// 	services.PingService = serviceMock
-//
-// 	response := httptest.NewRecorder()
-// 	context, _ := gin.CreateTestContext(response)
-//
-// 	PingController.Ping(context)
-//
-// 	if response.Code != http.StatusInternalServerError {
-// 		t.Error("response code should be 500")
-// 	}
-//
-// 	if response.Body.String() != "error executing ping" {
-// 		t.Error("response body should say 'error'")
-// 	}
-// }
+func TestPingWithError(t *testing.T) {
 
-// func TestPingNoError1(t *testing.T) {
-//
-// 	expectedHttpStatus := http.StatusOK
-// 	expectedHttpBody := "{\"message\":\"pong\"}"
-//
-// 	serviceMock := pingServiceMock{}
-// 	serviceMock.handlePingFn = func() (string, error) {
-// 		return "pong", nil
-// 	}
-// 	services.PingService = serviceMock
-//
-// 	response := httptest.NewRecorder()
-// 	context, _ := gin.CreateTestContext(response)
-//
-// 	PingController.Ping(context)
-//
-// 	if response.Code != expectedHttpStatus {
-// 		t.Error("response code should be 200")
-// 	}
-//
-// 	if response.Body.String() != expectedHttpBody {
-// 		t.Error("response body should say 'pong'")
-// 	}
-// }
+	expectedHttpStatus := http.StatusInternalServerError
+	expectedHttpBody := "error executing ping"
 
+	serviceMock := pingServiceMock{}
+	serviceMock.handlePingFn = func() (string, error) {
+		return "", errors.New("error executing ping")
+	}
+	services.PingService = serviceMock
+
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+
+	PingController.Ping(context)
+
+	actualHttpStatus := context.Writer.Status()
+	actualHttpBody := response.Body.String()
+
+	assert.NotEqual(t, actualHttpStatus, http.StatusOK)
+	assert.Equal(t, actualHttpStatus, expectedHttpStatus)
+	assert.Equal(t, actualHttpBody, expectedHttpBody)
+
+	// if response.Code != http.StatusInternalServerError {
+	// 	t.Error("response code should be 500")
+	// }
+
+	// if response.Body.String() != "error executing ping" {
+	// 	t.Error("response body should say 'error'")
+	// }
+}
+
+func TestPingNoError1(t *testing.T) {
+
+	expectedHttpStatus := http.StatusOK
+	expectedHttpBody := "{\"message\":\"pong\"}"
+
+	serviceMock := pingServiceMock{}
+	serviceMock.handlePingFn = func() (string, error) {
+		return "pong", nil
+	}
+	services.PingService = serviceMock
+
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+
+	PingController.Ping(context)
+
+	actualHttpStatus := context.Writer.Status()
+	actualHttpBody := response.Body.String()
+
+	assert.Equal(t, actualHttpStatus, expectedHttpStatus)
+	assert.Equal(t, actualHttpBody, expectedHttpBody)
+
+	// if response.Code != expectedHttpStatus {
+	// 	t.Error("response code should be 200")
+	// }
+
+	//	if response.Body.String() != expectedHttpBody {
+	//		t.Error("response body should say 'pong'")
+	//	}
+}
+
+// Same Test using testify, works but no code coverage report
 func (suite *PingTestSuite) Test_Ping_Return200() {
 
 	expectedHttpStatus := http.StatusOK
