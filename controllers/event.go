@@ -22,7 +22,6 @@ var (
 
 type eventController struct{}
 
-var eventModel = new(models.Event)
 var validationController = new(validation.ValidationController)
 
 // ListEvents godoc
