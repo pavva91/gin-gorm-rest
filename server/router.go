@@ -70,9 +70,8 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		}
 		eventsGroup := api.Group("events")
 		{
-			eventsController := new(controllers.EventController)
-			eventsGroup.GET("", eventsController.ListEvents)
-			eventsGroup.GET("/", eventsController.ListEvents)
+			eventsGroup.GET("", controllers.EventController.ListE)
+			eventsGroup.GET("/", controllers.EventController.ListE)
 			eventsGroup.GET("/:id", controllers.GetEvent)
 		}
 		securedEventsGroup := eventsGroup.Use(middlewares.Auth())
