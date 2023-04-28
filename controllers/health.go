@@ -5,7 +5,12 @@ import (
 	"net/http"
 )
 
-type HealthController struct{}
+type healthController struct{}
+
+var (
+	HealthController = healthController{}
+
+)
 
 // HealthController godoc
 //
@@ -16,10 +21,6 @@ type HealthController struct{}
 //	@Produce		json
 //	@Success		200	{string}	message
 //	@Router			/health [get]
-func (h HealthController) Status(c *gin.Context) {
+func (controller healthController) Status(c *gin.Context) {
 	c.String(http.StatusOK, "Working!")
-}
-
-func (h HealthController) Ping(context *gin.Context) {
-	context.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
