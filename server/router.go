@@ -70,15 +70,15 @@ func NewRouter(cfg config.ServerConfig) *gin.Engine {
 		}
 		eventsGroup := api.Group("events")
 		{
-			eventsGroup.GET("", controllers.EventController.ListE)
-			eventsGroup.GET("/", controllers.EventController.ListE)
-			eventsGroup.GET("/:id", controllers.GetEvent)
+			eventsGroup.GET("", controllers.EventController.ListEvents)
+			eventsGroup.GET("/", controllers.EventController.ListEvents)
+			eventsGroup.GET("/:id", controllers.EventController.GetEvent)
 		}
 		securedEventsGroup := eventsGroup.Use(middlewares.Auth())
 		{
-			securedEventsGroup.POST("/", controllers.CreateEvent)
-			securedEventsGroup.DELETE("/:id", controllers.DeleteEvent)
-			securedEventsGroup.PUT("/:id", controllers.SubstituteEvent)
+			securedEventsGroup.POST("/", controllers.EventController.CreateEvent)
+			securedEventsGroup.DELETE("/:id", controllers.EventController.DeleteEvent)
+			securedEventsGroup.PUT("/:id", controllers.EventController.SubstituteEvent)
 		}
 
 	}
