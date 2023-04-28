@@ -116,14 +116,20 @@ In code import:
 - Run tests of a folder (e.g. validation): `go test ./validation`
 - Run tests of a module (e.g. validation): `go test github.com/pavva91/gin-gorm-rest/validation`
 
+### Code Structure to enable Unit Tests (testeable code)
+- [Code samples](https://github.com/federicoleon/golang-examples/tree/master/testeable_code)
+
 ### Code Coverage
 - By package name: 
   - Just run: `go test -cover github.com/pavva91/gin-gorm-rest/validation`
   - Create coverage file: `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+  - One Command create coverage file and open in browser; `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/controllers && go tool cover -html=cover.out`
+
 - By folder:
   - Just run: `go test -cover ./validation`
-  - Create coverage file: `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
+  - Create coverage file: `go test -v -coverprofile cover.out ./validation`
   - Open coverage file on browser: `go tool cover -html=cover.out`
+  - One Command create coverage file and open in browser; `go test -v -coverprofile cover.out ./controllers/ && go tool cover -html=cover.out`
 
 - Run all tests:
   - Just run: `go test ./... -cover`
