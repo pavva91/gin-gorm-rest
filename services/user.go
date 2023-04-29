@@ -12,6 +12,7 @@ var (
 type userService interface {
 	ListUsers() ([]models.User, error)
 	GetByID(id string) (*models.User, error)
+	GetByEmail(email string) (*models.User, error)
 	GetByUsername(username string) (*models.User, error)
 	Update(user *models.User) (*models.User, error)
 	Delete(id string) (*models.User, error)
@@ -28,6 +29,12 @@ func (service userServiceImpl) ListUsers() ([]models.User, error) {
 func (service userServiceImpl) GetByID(id string) (*models.User, error) {
 	var user *models.User
 	db.GetDB().Where("id = ?", id).First(&user)
+	return user, nil
+}
+
+func (service userServiceImpl) GetByEmail(email string) (*models.User, error) {
+	var user *models.User
+	db.GetDB().Where("email = ?", email).First(&user)
 	return user, nil
 }
 
