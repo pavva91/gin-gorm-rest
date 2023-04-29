@@ -50,4 +50,3 @@ func (service eventServiceImpl) SaveEvent(event *models.Event) (*models.Event, e
 	db.GetDB().Save(&event)
 	return event, nil
 }
-

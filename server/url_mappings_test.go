@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMappings(t *testing.T) {
+func TestRoutesMappings(t *testing.T) {
 	apiVersion := "/api/v1"
 
 	assert.EqualValues(t, 0, len(router.Routes()))
