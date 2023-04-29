@@ -63,22 +63,6 @@ func (controller userController) ListUsers(c *gin.Context) {
 	c.JSON(200, &users)
 }
 
-func (controller userController) GetUserOld(c *gin.Context) {
-	if c.Param("id") != "" {
-		user, err := services.UserService.GetByID(c.Param("id"))
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": err})
-			c.Abort()
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "User founded!", "user": user})
-		return
-	}
-	c.JSON(http.StatusBadRequest, gin.H{"message": "bad request"})
-	c.Abort()
-	return
-}
-
 func (controller userController) GetUser(c *gin.Context) {
 	userId := c.Param("id")
 	if !validationController.IsEmpty(userId) {
