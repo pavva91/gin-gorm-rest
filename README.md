@@ -113,6 +113,8 @@ In code import:
 
 - `go get -u github.com/stretchr/testify`
 - Run all tests: `go test ./...`
+- Run specific tests (regex): `go test -run TestMyFunction ./...`
+- Run specific tests (regex) of a module (e.g. controllers): `go test -run Test_GenerateToken ./controllers`
 - Run tests of a folder (e.g. validation): `go test ./validation`
 - Run tests of a module (e.g. validation): `go test github.com/pavva91/gin-gorm-rest/validation`
 
