@@ -8,13 +8,23 @@ import (
 
 var jwtKey = []byte("supersecretkey")
 
+var (
+	AuthenticationService authenticationService = authenticationServiceImpl{}
+)
+
+type authenticationService interface {
+	GenerateJWT(email string, username string) (tokenString string, err error)
+}
+
+type authenticationServiceImpl struct{}
+
 type JWTClaim struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	jwt.RegisteredClaims
 }
 
-func GenerateJWT(email string, username string) (tokenString string, err error) {
+func (service authenticationServiceImpl) GenerateJWT(email string, username string) (tokenString string, err error) {
 	nowTime := time.Now()
 	expirationTime := nowTime.Add(1 * time.Hour)
 	claims := &JWTClaim{
