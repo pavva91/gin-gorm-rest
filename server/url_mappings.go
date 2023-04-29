@@ -11,7 +11,7 @@ func mapUrls(apiVersion string) {
 	api := router.Group(apiVersion)
 	{
 		// unsecured calls
-		api.POST("/token", controllers.GenerateToken)
+		api.POST("/token", controllers.TokenController.GenerateToken)
 
 		// secured calls
 		secured := api.Group("secured").Use(middlewares.Auth())

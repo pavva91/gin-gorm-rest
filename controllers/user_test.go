@@ -15,6 +15,7 @@ import (
 type userServiceMock struct {
 	listUsersFn     func() ([]models.User, error)
 	getByIDFn       func() (*models.User, error)
+	getByEmailFn    func() (*models.User, error)
 	getByUsernameFn func() (*models.User, error)
 	updateFn        func() (*models.User, error)
 	deleteFn        func() (*models.User, error)
@@ -26,6 +27,10 @@ func (mock userServiceMock) ListUsers() ([]models.User, error) {
 
 func (mock userServiceMock) GetByID(id string) (*models.User, error) {
 	return mock.getByIDFn()
+}
+
+func (mock userServiceMock) GetByEmail(username string) (*models.User, error) {
+	return mock.getByEmailFn()
 }
 
 func (mock userServiceMock) GetByUsername(username string) (*models.User, error) {
