@@ -7,8 +7,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// "github.com/federicoleon/golang-examples/code_structure/mvc/controllers"
-
 func mapUrls(apiVersion string) {
 	api := router.Group(apiVersion)
 	{
