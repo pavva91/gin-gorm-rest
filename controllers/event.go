@@ -22,7 +22,7 @@ var (
 
 type eventController struct{}
 
-var validationController = new(validation.ValidationController)
+var validationUtility = new(validation.ValidationUtility)
 
 // ListEvents godoc
 //
@@ -61,9 +61,9 @@ func (controller eventController) GetEvent(c *gin.Context) {
 	// var event models.Event
 	eventId := c.Param("id")
 	// if eventId != "" {
-	if !validationController.IsEmpty(eventId) {
+	if !validationUtility.IsEmpty(eventId) {
 		// _, err := strconv.ParseUint(eventId, 10, 64)
-		if !validationController.IsInt64(eventId) {
+		if !validationUtility.IsInt64(eventId) {
 			r := errorhandling.SimpleErrorMessage{Message: "Not valid parameter, Insert valid id"}
 			c.JSON(http.StatusBadRequest, r)
 			c.Abort()
@@ -76,7 +76,7 @@ func (controller eventController) GetEvent(c *gin.Context) {
 			return
 		}
 
-		if validationController.IsZero(int(event.ID)) {
+		if validationUtility.IsZero(int(event.ID)) {
 			r := errorhandling.SimpleErrorMessage{Message: "No event found!"}
 			c.JSON(http.StatusNotFound, r)
 			return
@@ -192,7 +192,7 @@ func (controller eventController) SubstituteEvent(c *gin.Context) {
 	var newEvent models.Event
 	eventId := c.Param("id")
 	if eventId != "" {
-		if !validationController.IsInt64(eventId) {
+		if !validationUtility.IsInt64(eventId) {
 			errorMessage := errorhandling.SimpleErrorMessage{Message: fmt.Sprintf("Not valid event id: %s - Insert valid id", eventId)}
 			c.JSON(http.StatusBadRequest, errorMessage)
 			return

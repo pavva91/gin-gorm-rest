@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-var validationController = new(ValidationController)
+var validationUtility = new(ValidationUtility)
 
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
@@ -42,37 +42,37 @@ func (suite *ValidationTestSuite) SetupTest() {
 
 func (suite *ValidationTestSuite) Test_IsInt64_Int64String_ReturnTrue() {
 	expected := true
-	actual := validationController.IsInt64(suite.Int64String)
+	actual := validationUtility.IsInt64(suite.Int64String)
 	assert.Equal(suite.T(), actual, expected)
 }
 
 func (suite *ValidationTestSuite) Test_IsInt64_NonInt64String_ReturnFalse() {
 	expected := false
-	actual := validationController.IsInt64(suite.NonInt64String)
+	actual := validationUtility.IsInt64(suite.NonInt64String)
 	assert.Equal(suite.T(), actual, expected)
 }
 
 func (suite *ValidationTestSuite) Test_IsEmpty_EmptyString_ReturnTrue() {
 	expected := true
-	actual := validationController.IsEmpty(suite.EmptyString)
+	actual := validationUtility.IsEmpty(suite.EmptyString)
 	assert.Equal(suite.T(), actual, expected)
 }
 
 func (suite *ValidationTestSuite) Test_IsEmpty_NonEmptyString_ReturnFalse() {
 	expected := false
-	actual := validationController.IsEmpty(suite.NonEmptyString)
+	actual := validationUtility.IsEmpty(suite.NonEmptyString)
 	assert.Equal(suite.T(), actual, expected)
 }
 
 func (suite *ValidationTestSuite) Test_IsZero_ZeroString_ReturnTrue() {
 	expected := true
-	actual := validationController.IsZero(suite.ZeroString)
+	actual := validationUtility.IsZero(suite.ZeroString)
 	assert.Equal(suite.T(), actual, expected)
 }
 
 func (suite *ValidationTestSuite) Test_IsZero_NonZeroString_ReturnFalse() {
 	expected := false
-	actual := validationController.IsZero(suite.NonZeroString)
+	actual := validationUtility.IsZero(suite.NonZeroString)
 	assert.Equal(suite.T(), actual, expected)
 }
 

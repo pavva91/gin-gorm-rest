@@ -6,9 +6,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type ValidationController struct{}
+type ValidationUtility struct{}
 
-func (vc ValidationController) IsInt64(id string) (isInt64 bool) {
+func (vc ValidationUtility) IsInt64(id string) (isInt64 bool) {
 	isInt64 = true
 	_, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
@@ -18,7 +18,7 @@ func (vc ValidationController) IsInt64(id string) (isInt64 bool) {
 	return isInt64
 }
 
-func (vc ValidationController) IsEmpty(id string) (isEmpty bool) {
+func (vc ValidationUtility) IsEmpty(id string) (isEmpty bool) {
 	isEmpty = false
 	if id == "" {
 		log.Info().Msg("Id is empty")
@@ -27,7 +27,7 @@ func (vc ValidationController) IsEmpty(id string) (isEmpty bool) {
 	return isEmpty
 }
 
-func (vc ValidationController) IsZero(id int) (isZero bool) {
+func (vc ValidationUtility) IsZero(id int) (isZero bool) {
 	isZero = false
 	if id == 0 {
 		isZero = true

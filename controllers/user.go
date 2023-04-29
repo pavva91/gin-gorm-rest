@@ -65,8 +65,8 @@ func (controller userController) ListUsers(c *gin.Context) {
 
 func (controller userController) GetUser(c *gin.Context) {
 	userId := c.Param("id")
-	if !validationController.IsEmpty(userId) {
-		if !validationController.IsInt64(userId) {
+	if !validationUtility.IsEmpty(userId) {
+		if !validationUtility.IsInt64(userId) {
 			r := errorhandling.SimpleErrorMessage{Message: "Not valid parameter, Insert valid id"}
 			c.JSON(http.StatusBadRequest, r)
 			c.Abort()
@@ -80,7 +80,7 @@ func (controller userController) GetUser(c *gin.Context) {
 			return
 		}
 
-		if validationController.IsZero(int(user.ID)) {
+		if validationUtility.IsZero(int(user.ID)) {
 			r := errorhandling.SimpleErrorMessage{Message: "No user found"}
 			c.JSON(http.StatusNotFound, r)
 			c.Abort()
