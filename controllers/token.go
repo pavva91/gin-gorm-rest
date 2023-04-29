@@ -7,20 +7,25 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/pavva91/gin-gorm-rest/auth"
-	"github.com/pavva91/gin-gorm-rest/db"
 	"github.com/pavva91/gin-gorm-rest/errorhandling"
-	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/services"
 	"github.com/rs/zerolog/log"
 )
 
 type TokenRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
-func GenerateToken(c *gin.Context) {
+var (
+	TokenController = tokenController{}
+)
+
+type tokenController struct{}
+
+func (controller tokenController) GenerateToken(c *gin.Context) {
 	var request TokenRequest
-	var user models.User
+	// var user models.User
 	if err := c.ShouldBindJSON(&request); err != nil {
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
@@ -36,10 +41,16 @@ func GenerateToken(c *gin.Context) {
 		return
 	}
 	// check if email exists and password is correct
-	record := db.GetDB().Where("email = ?", request.Email).First(&user)
-	if record.Error != nil {
-		errorMessage := errorhandling.SimpleErrorMessage{Message: record.Error.Error()}
+	user, err := services.UserService.GetByEmail(request.Email)
+	if err != nil {
+		errorMessage := errorhandling.SimpleErrorMessage{Message: err.Error()}
 		c.JSON(http.StatusInternalServerError, errorMessage)
+		c.Abort()
+		return
+	}
+	if user.ID == 0 {
+		errorMessage := errorhandling.SimpleErrorMessage{Message: "User not found"}
+		c.JSON(http.StatusUnauthorized, errorMessage)
 		c.Abort()
 		return
 	}
@@ -50,7 +61,8 @@ func GenerateToken(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	tokenString, err := auth.GenerateJWT(user.Email, user.Username)
+	// tokenString, err := auth.GenerateJWT(user.Email, user.Username)
+	tokenString, err := auth.AuthenticationService.GenerateJWT(user.Email, user.Username)
 	if err != nil {
 		errorMessage := errorhandling.SimpleErrorMessage{Message: err.Error()}
 		c.JSON(http.StatusInternalServerError, errorMessage)
