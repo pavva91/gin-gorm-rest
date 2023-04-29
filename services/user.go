@@ -47,4 +47,3 @@ func (service userServiceImpl) Delete(id string) (*models.User, error) {
 	db.GetDB().Where("id = ?", id).Delete(&user)
 	return user, nil
 }
-

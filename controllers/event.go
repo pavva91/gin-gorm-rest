@@ -64,17 +64,19 @@ func (controller eventController) GetEvent(c *gin.Context) {
 	if !validationController.IsEmpty(eventId) {
 		// _, err := strconv.ParseUint(eventId, 10, 64)
 		if !validationController.IsInt64(eventId) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Not valid parameter, Insert valid id"})
+			r := errorhandling.SimpleErrorMessage{Message: "Not valid parameter, Insert valid id"}
+			c.JSON(http.StatusBadRequest, r)
+			c.Abort()
 			return
 		}
 		event, err := services.EventService.GetById(eventId)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": err})
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to get event", "error": err})
 			c.Abort()
 			return
 		}
 
-		if validationController.IsZero(event.Id) {
+		if validationController.IsZero(int(event.ID)) {
 			r := errorhandling.SimpleErrorMessage{Message: "No event found!"}
 			c.JSON(http.StatusNotFound, r)
 			return
@@ -107,7 +109,6 @@ func (controller eventController) GetEvent(c *gin.Context) {
 //	@Router			/events [post]
 func (controller eventController) CreateEvent(c *gin.Context) {
 	var event models.Event
-	var userModel models.User
 
 	tokenString := c.GetHeader("Authorization")
 
@@ -117,7 +118,7 @@ func (controller eventController) CreateEvent(c *gin.Context) {
 	}
 
 	log.Info().Msg("Username: " + claims.Username)
-	user, err := userModel.GetByUsername(claims.Username)
+	user, err := services.UserService.GetByUsername(claims.Username)
 	event.UserID = int(user.ID)
 
 	err = c.ShouldBind(&event)
@@ -197,8 +198,8 @@ func (controller eventController) SubstituteEvent(c *gin.Context) {
 			return
 		}
 		oldEvent, _ := services.EventService.GetById(eventId)
-		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
-		if oldEvent.Id == 0 {
+		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.ID), 10))
+		if oldEvent.ID == 0 {
 			errorMessage := errorhandling.SimpleErrorMessage{Message: "No event found!"}
 			c.JSON(http.StatusNotFound, errorMessage)
 			return
@@ -220,8 +221,8 @@ func (controller eventController) SubstituteEvent(c *gin.Context) {
 
 		}
 
-		newEvent.Id = oldEvent.Id
-		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.Id), 10))
+		newEvent.ID = oldEvent.ID
+		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.ID), 10))
 		services.EventService.SaveEvent(&newEvent)
 		c.JSON(http.StatusOK, &newEvent)
 	}
