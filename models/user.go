@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/pavva91/gin-gorm-rest/db"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -13,18 +12,6 @@ type User struct {
 	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"password"`
 	Events   []Event
-}
-
-func (h User) GetByID(id string) (*User, error) {
-	var user *User
-	db.GetDB().Where("id = ?", id).First(&user)
-	return user, nil
-}
-
-func (h User) GetByUsername(username string) (*User, error) {
-	var user *User
-	db.GetDB().Where("username = ?", username).First(&user)
-	return user, nil
 }
 
 func (user *User) HashPassword(password string) error {
