@@ -39,6 +39,7 @@ func TestPingPongUnsecured(t *testing.T) {
 
 	// Grab our router
 	router := server.NewRouter(cfg)
+	server.MapUrls(cfg)
 
 	// Perform a GET request with that handler.
 	// w := performRequest(router, "GET", "/api/v1/ping")
@@ -75,6 +76,7 @@ func TestPingPongSecuredWithoutJWT(t *testing.T) {
 
 	// Grab our router
 	router := server.NewRouter(cfg)
+	// server.MapUrls(cfg)
 
 	// Perform a GET request with that handler.
 	// w := performRequest(router, "GET", "/api/v1/ping")
