@@ -29,11 +29,11 @@ func mapUrls(apiVersion string) {
 
 		usersGroup := api.Group("users")
 		{
-			usersController := new(controllers.UserController)
-			usersGroup.POST("", usersController.RegisterUser)
-			usersGroup.GET("", usersController.ListUsers)
-			usersGroup.GET("/", usersController.ListUsers)
-			usersGroup.GET("/:id", usersController.GetUser)
+			usersGroup.POST("", controllers.UserController.RegisterUser)
+			usersGroup.GET("", controllers.UserController.ListUsers)
+			usersGroup.GET("/", controllers.UserController.ListUsers)
+			usersGroup.GET("/:id", controllers.UserController.GetUser)
+			usersGroup.PATCH("/:id", controllers.UserController.UpdateUser)
 		}
 		eventsGroup := api.Group("events")
 		{

@@ -6,17 +6,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/pavva91/gin-gorm-rest/auth"
 	"github.com/pavva91/gin-gorm-rest/db"
 	"github.com/pavva91/gin-gorm-rest/errorhandling"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/services"
 	"github.com/rs/zerolog/log"
 )
 
-type UserController struct{}
+var (
+	UserController = userController{}
+)
 
-var userModel = new(models.User)
+type userController struct{}
 
-func (u UserController) RegisterUser(c *gin.Context) {
+func (controller userController) RegisterUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		var verr validator.ValidationErrors
@@ -49,9 +53,19 @@ func (u UserController) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, &user)
 }
 
-func (u UserController) GetUser(c *gin.Context) {
+func (controller userController) ListUsers(c *gin.Context) {
+	users, err := services.UserService.ListUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list users", "error": err})
+		c.Abort()
+		return
+	}
+	c.JSON(200, &users)
+}
+
+func (controller userController) GetUserOld(c *gin.Context) {
 	if c.Param("id") != "" {
-		user, err := userModel.GetByID(c.Param("id"))
+		user, err := services.UserService.GetByID(c.Param("id"))
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to retrieve user", "error": err})
 			c.Abort()
@@ -65,16 +79,37 @@ func (u UserController) GetUser(c *gin.Context) {
 	return
 }
 
-func (u UserController) ListUsers(c *gin.Context) {
-	users := []models.User{}
-	db.GetDB().Find(&users)
-	c.JSON(200, &users)
-}
+func (controller userController) GetUser(c *gin.Context) {
+	userId := c.Param("id")
+	if !validationController.IsEmpty(userId) {
+		if !validationController.IsInt64(userId) {
+			r := errorhandling.SimpleErrorMessage{Message: "Not valid parameter, Insert valid id"}
+			c.JSON(http.StatusBadRequest, r)
+			c.Abort()
+			return
+		}
+		user, err := services.UserService.GetByID(userId)
+		if err != nil {
+			r := errorhandling.SimpleErrorMessage{Message: "Error to get user"}
+			c.JSON(http.StatusInternalServerError, r)
+			c.Abort()
+			return
+		}
 
-func GetUser(c *gin.Context) {
-	var user models.User
-	db.GetDB().Where("id = ?", c.Param("id")).First(&user)
-	c.JSON(200, &user)
+		if validationController.IsZero(int(user.ID)) {
+			r := errorhandling.SimpleErrorMessage{Message: "No user found"}
+			c.JSON(http.StatusNotFound, r)
+			c.Abort()
+			return
+		} else {
+			c.JSON(http.StatusOK, user)
+			return
+		}
+	}
+	r := errorhandling.SimpleErrorMessage{Message: "empty id"}
+	c.JSON(http.StatusBadRequest, r)
+	c.Abort()
+	return
 }
 
 func CreateUser(c *gin.Context) {
@@ -85,15 +120,44 @@ func CreateUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	var user models.User
-	db.GetDB().Where("id = ?", c.Param("id")).Delete(&user)
+	user, err := services.UserService.Delete(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to delete user", "error": err})
+		c.Abort()
+		return
+	}
 	c.JSON(200, &user)
 }
 
-func UpdateUser(c *gin.Context) {
-	var user models.User
-	db.GetDB().Where("id = ?", c.Param("id")).First(&user)
-	c.BindJSON(&user)
-	db.GetDB().Save(&user)
-	c.JSON(200, &user)
+func (controller userController) UpdateUser(context *gin.Context) {
+	// var newUser models.User
+	// Check user type requester
+	tokenString := context.GetHeader("Authorization")
+
+	claims, err := auth.DecodeJWT(tokenString)
+	if err != nil {
+		log.Err(err).Msg("Unable to Decode JWT Token")
+	}
+
+	log.Info().Msg("Username: " + claims.Username)
+	authenticatedUser, err := services.UserService.GetByUsername(claims.Username)
+
+	oldUser, err := services.UserService.GetByID(context.Param("id"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to get user", "error": err})
+		context.Abort()
+		return
+	}
+
+	context.BindJSON(&oldUser)
+
+	if authenticatedUser.ID != oldUser.ID {
+		context.JSON(http.StatusMethodNotAllowed, gin.H{"message": "Not allowed", "error": err})
+		context.Abort()
+		return
+	}
+
+	services.UserService.Update(oldUser)
+	// db.GetDB().Save(&user)
+	context.JSON(200, &oldUser)
 }
