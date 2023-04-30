@@ -14,11 +14,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type authenticationServiceMock struct {
+type authenticationUtilityMock struct {
 	generateJWTFn func() (tokenString string, err error)
 }
 
-func (mock authenticationServiceMock) GenerateJWT(email string, username string) (tokenString string, err error) {
+func (mock authenticationUtilityMock) GenerateJWT(email string, username string) (tokenString string, err error) {
 	return mock.generateJWTFn()
 }
 
@@ -231,11 +231,11 @@ func Test_GenerateToken_GenerateJWTError_500InternalServerError(t *testing.T) {
 	}
 	services.UserService = userServiceMock
 
-	authenticationServiceMock := authenticationServiceMock{}
-	authenticationServiceMock.generateJWTFn = func() (tokenString string, err error) {
+	authenticationUtilityMock := authenticationUtilityMock{}
+	authenticationUtilityMock.generateJWTFn = func() (tokenString string, err error) {
 		return "", errors.New(internalErrorMessageMock)
 	}
-	auth.AuthenticationService = authenticationServiceMock
+	auth.AuthenticationUtility = authenticationUtilityMock
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -276,11 +276,11 @@ func Test_GenerateToken_CorrectUser_200JWTToken(t *testing.T) {
 	}
 	services.UserService = userServiceMock
 
-	authenticationServiceMock := authenticationServiceMock{}
-	authenticationServiceMock.generateJWTFn = func() (tokenString string, err error) {
+	authenticationUtilityMock := authenticationUtilityMock{}
+	authenticationUtilityMock.generateJWTFn = func() (tokenString string, err error) {
 		return tokenStringMock, nil
 	}
-	auth.AuthenticationService = authenticationServiceMock
+	auth.AuthenticationUtility = authenticationUtilityMock
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)

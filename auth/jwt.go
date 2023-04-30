@@ -9,14 +9,14 @@ import (
 var jwtKey = []byte("supersecretkey")
 
 var (
-	AuthenticationService authenticationService = authenticationServiceImpl{}
+	AuthenticationUtility authenticationUtility = authenticationUtilityImpl{}
 )
 
-type authenticationService interface {
+type authenticationUtility interface {
 	GenerateJWT(email string, username string) (tokenString string, err error)
 }
 
-type authenticationServiceImpl struct{}
+type authenticationUtilityImpl struct{}
 
 type JWTClaim struct {
 	Username string `json:"username"`
@@ -24,7 +24,7 @@ type JWTClaim struct {
 	jwt.RegisteredClaims
 }
 
-func (service authenticationServiceImpl) GenerateJWT(email string, username string) (tokenString string, err error) {
+func (service authenticationUtilityImpl) GenerateJWT(email string, username string) (tokenString string, err error) {
 	nowTime := time.Now()
 	expirationTime := nowTime.Add(1 * time.Hour)
 	claims := &JWTClaim{
@@ -36,13 +36,13 @@ func (service authenticationServiceImpl) GenerateJWT(email string, username stri
 			Audience:  []string{},
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 			NotBefore: &jwt.NumericDate{},
-			IssuedAt:  &jwt.NumericDate{},
+			IssuedAt:  jwt.NewNumericDate(nowTime),
 			ID:        "",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err = token.SignedString(jwtKey)
-	return
+	return tokenString, err
 }
 
 func ValidateToken(signedToken string) (err error) {
@@ -54,18 +54,18 @@ func ValidateToken(signedToken string) (err error) {
 		},
 	)
 	if err != nil {
-		return
+		return err
 	}
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok {
 		err = errors.New("couldn't parse claims")
-		return
+		return err
 	}
 	if claims.ExpiresAt.Time.Unix() < time.Now().Local().Unix() {
 		err = errors.New("token expired")
 		return
 	}
-	return
+	return err
 }
 
 func DecodeJWT(signedToken string) (claims *JWTClaim, err error) {

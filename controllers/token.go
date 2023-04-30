@@ -62,7 +62,7 @@ func (controller tokenController) GenerateToken(c *gin.Context) {
 		return
 	}
 	// tokenString, err := auth.GenerateJWT(user.Email, user.Username)
-	tokenString, err := auth.AuthenticationService.GenerateJWT(user.Email, user.Username)
+	tokenString, err := auth.AuthenticationUtility.GenerateJWT(user.Email, user.Username)
 	if err != nil {
 		errorMessage := errorhandling.SimpleErrorMessage{Message: err.Error()}
 		c.JSON(http.StatusInternalServerError, errorMessage)
