@@ -16,7 +16,7 @@ func TestRoutesMappings(t *testing.T) {
 
 	routes := router.Routes()
 
-	expectedNumberOfRoutes := 15
+	expectedNumberOfRoutes := 16
 	assert.EqualValues(t, expectedNumberOfRoutes, len(routes))
 
 	expectedHttpMethod := http.MethodPost
