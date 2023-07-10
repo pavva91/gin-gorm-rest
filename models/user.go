@@ -11,9 +11,10 @@ type User struct {
 	Username string `json:"username" gorm:"unique"`
 	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"password"`
-	Events   []Event
+	Events   []Event `gorm:"foreignKey:UserID"`
 }
 
+// HashPassword method  
 func (user *User) HashPassword(password string) error {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {

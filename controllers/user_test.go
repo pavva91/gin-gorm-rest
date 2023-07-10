@@ -9,41 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/services"
+	"github.com/pavva91/gin-gorm-rest/stubs"
 	"github.com/stretchr/testify/assert"
 )
-
-type userServiceMock struct {
-	listUsersFn     func() ([]models.User, error)
-	getByIDFn       func() (*models.User, error)
-	getByEmailFn    func() (*models.User, error)
-	getByUsernameFn func() (*models.User, error)
-	updateFn        func() (*models.User, error)
-	deleteFn        func() (*models.User, error)
-}
-
-func (mock userServiceMock) ListUsers() ([]models.User, error) {
-	return mock.listUsersFn()
-}
-
-func (mock userServiceMock) GetByID(id string) (*models.User, error) {
-	return mock.getByIDFn()
-}
-
-func (mock userServiceMock) GetByEmail(username string) (*models.User, error) {
-	return mock.getByEmailFn()
-}
-
-func (mock userServiceMock) GetByUsername(username string) (*models.User, error) {
-	return mock.getByUsernameFn()
-}
-
-func (mock userServiceMock) Update(user *models.User) (*models.User, error) {
-	return mock.updateFn()
-}
-
-func (mock userServiceMock) Delete(id string) (*models.User, error) {
-	return mock.deleteFn()
-}
 
 func Test_GetByID_EmptyId_400BadRequest(t *testing.T) {
 	expectedHttpStatus := http.StatusBadRequest
@@ -90,8 +58,8 @@ func Test_GetByID_InternalErrorGetById_500InternalServerError(t *testing.T) {
 	expectedError := "Error to get user"
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByIDFn = func() (*models.User, error) {
+	userServiceMock := stubs.UserServiceStub{}
+	userServiceMock.GetByIDFn = func() (*models.User, error) {
 		return nil, errors.New("error stub")
 	}
 	services.UserService = userServiceMock
@@ -118,8 +86,8 @@ func Test_GetByID_NotFoundId_404NotFound(t *testing.T) {
 
 	var userStub models.User
 	userStub.ID = 0
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByIDFn = func() (*models.User, error) {
+	userServiceMock := stubs.UserServiceStub{}
+	userServiceMock.GetByIDFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
 	services.UserService = userServiceMock
@@ -149,8 +117,8 @@ func Test_GetByID_FoundId_200ReturnUser(t *testing.T) {
 	userStub.Username = "user1234"
 	userStub.Password = "encrypted"
 
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByIDFn = func() (*models.User, error) {
+	userServiceMock := stubs.UserServiceStub{}
+	userServiceMock.GetByIDFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
 	services.UserService = userServiceMock

@@ -8,19 +8,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/auth"
-	"github.com/pavva91/gin-gorm-rest/mocking"
+	"github.com/pavva91/gin-gorm-rest/mocks"
 	"github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/services"
+	"github.com/pavva91/gin-gorm-rest/stubs"
 	"github.com/stretchr/testify/assert"
 )
-
-type authenticationUtilityMock struct {
-	generateJWTFn func() (tokenString string, err error)
-}
-
-func (mock authenticationUtilityMock) GenerateJWT(email string, username string) (tokenString string, err error) {
-	return mock.generateJWTFn()
-}
 
 func Test_GenerateToken_InvalidRequestBody_400BadRequest(t *testing.T) {
 	expectedHttpStatus := http.StatusBadRequest
@@ -35,7 +28,7 @@ func Test_GenerateToken_InvalidRequestBody_400BadRequest(t *testing.T) {
 	}
 
 	wrongRequestBody := []string{"foo", "bar", "baz"}
-	mocking.MockJsonPost(context, wrongRequestBody)
+	mocks.MockJsonPost(context, wrongRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -62,7 +55,7 @@ func Test_GenerateToken_InvalidRequestBodyNoEmailField_400BadRequest(t *testing.
 		Password: "pass1234",
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -90,7 +83,7 @@ func Test_GenerateToken_InvalidRequestBodyNoPasswordField_400BadRequest(t *testi
 		Email: "alice@wonder.land",
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -109,11 +102,11 @@ func Test_GenerateToken_GetByEmailError_500InternalServerError(t *testing.T) {
 	expectedError := internalErrorMessage
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByEmailFn = func() (*models.User, error) {
+	userServiceStub := stubs.UserServiceStub{}
+	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return nil, errors.New(internalErrorMessage)
 	}
-	services.UserService = userServiceMock
+	services.UserService = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -127,7 +120,7 @@ func Test_GenerateToken_GetByEmailError_500InternalServerError(t *testing.T) {
 		Password: "pass1234",
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -143,13 +136,13 @@ func Test_GenerateToken_WrongEmail_401Unauthorized(t *testing.T) {
 	expectedError := "User not found"
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
-	var userMock models.User
-	userMock.ID = 0
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByEmailFn = func() (*models.User, error) {
-		return &userMock, nil
+	var userStub models.User
+	userStub.ID = 0
+	userServiceStub := stubs.UserServiceStub{}
+	userServiceStub.GetByEmailFn = func() (*models.User, error) {
+		return &userStub, nil
 	}
-	services.UserService = userServiceMock
+	services.UserService = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -164,7 +157,7 @@ func Test_GenerateToken_WrongEmail_401Unauthorized(t *testing.T) {
 		Password: "pass1234",
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -182,14 +175,14 @@ func Test_GenerateToken_WrongPassword_401Unauthorized(t *testing.T) {
 	expectedError := "Invalid Credentials"
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
-	var userMock models.User
-	userMock.ID = 1
-	userMock.HashPassword(correctPassword)
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByEmailFn = func() (*models.User, error) {
-		return &userMock, nil
+	var userStub models.User
+	userStub.ID = 1
+	userStub.HashPassword(correctPassword)
+	userServiceStub := stubs.UserServiceStub{}
+	userServiceStub.GetByEmailFn = func() (*models.User, error) {
+		return &userStub, nil
 	}
-	services.UserService = userServiceMock
+	services.UserService = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -203,7 +196,7 @@ func Test_GenerateToken_WrongPassword_401Unauthorized(t *testing.T) {
 		Password: wrongPassword,
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -222,17 +215,17 @@ func Test_GenerateToken_GenerateJWTError_500InternalServerError(t *testing.T) {
 	expectedError := internalErrorMessageMock
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
-	var userMock models.User
-	userMock.ID = 1
-	userMock.HashPassword(correctPassword)
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByEmailFn = func() (*models.User, error) {
-		return &userMock, nil
+	var userStub models.User
+	userStub.ID = 1
+	userStub.HashPassword(correctPassword)
+	userServiceStub := stubs.UserServiceStub{}
+	userServiceStub.GetByEmailFn = func() (*models.User, error) {
+		return &userStub, nil
 	}
-	services.UserService = userServiceMock
+	services.UserService = userServiceStub
 
-	authenticationUtilityMock := authenticationUtilityMock{}
-	authenticationUtilityMock.generateJWTFn = func() (tokenString string, err error) {
+	authenticationUtilityMock := stubs.AuthenticationUtilityStub{}
+	authenticationUtilityMock.GenerateJWTFn = func() (tokenString string, err error) {
 		return "", errors.New(internalErrorMessageMock)
 	}
 	auth.AuthenticationUtility = authenticationUtilityMock
@@ -249,7 +242,7 @@ func Test_GenerateToken_GenerateJWTError_500InternalServerError(t *testing.T) {
 		Password: correctPassword,
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 
@@ -267,17 +260,17 @@ func Test_GenerateToken_CorrectUser_200JWTToken(t *testing.T) {
 	expectedHttpStatus := http.StatusOK
 	expectedHttpBody := "{\"token\":\"" + tokenStringMock + "\"}"
 
-	var userMock models.User
-	userMock.ID = 1
-	userMock.HashPassword(correctPassword)
-	userServiceMock := userServiceMock{}
-	userServiceMock.getByEmailFn = func() (*models.User, error) {
-		return &userMock, nil
+	var userStub models.User
+	userStub.ID = 1
+	userStub.HashPassword(correctPassword)
+	userServiceStub := stubs.UserServiceStub{}
+	userServiceStub.GetByEmailFn = func() (*models.User, error) {
+		return &userStub, nil
 	}
-	services.UserService = userServiceMock
+	services.UserService = userServiceStub
 
-	authenticationUtilityMock := authenticationUtilityMock{}
-	authenticationUtilityMock.generateJWTFn = func() (tokenString string, err error) {
+	authenticationUtilityMock := stubs.AuthenticationUtilityStub{}
+	authenticationUtilityMock.GenerateJWTFn = func() (tokenString string, err error) {
 		return tokenStringMock, nil
 	}
 	auth.AuthenticationUtility = authenticationUtilityMock
@@ -294,7 +287,7 @@ func Test_GenerateToken_CorrectUser_200JWTToken(t *testing.T) {
 		Password: correctPassword,
 	}
 
-	mocking.MockJsonPost(context, mockRequestBody)
+	mocks.MockJsonPost(context, mockRequestBody)
 
 	TokenController.GenerateToken(context)
 

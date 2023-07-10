@@ -9,17 +9,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/services"
+	"github.com/pavva91/gin-gorm-rest/stubs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
-
-type pingServiceMock struct {
-	handlePingFn func() (string, error)
-}
-
-func (mock pingServiceMock) HandlePing() (string, error) {
-	return mock.handlePingFn()
-}
 
 type PingTestSuite struct {
 	suite.Suite
@@ -27,7 +20,7 @@ type PingTestSuite struct {
 	GinEnginePointer   *gin.Engine
 	HttpResponseWriter http.ResponseWriter
 	W                  *httptest.ResponseRecorder
-	ServiceMock        pingServiceMock
+	PingServiceStub    stubs.PingServiceStub
 }
 
 // Setup Stub Values
@@ -44,8 +37,8 @@ func TestPingWithError(t *testing.T) {
 	expectedHttpStatus := http.StatusInternalServerError
 	expectedHttpBody := "error executing ping"
 
-	serviceMock := pingServiceMock{}
-	serviceMock.handlePingFn = func() (string, error) {
+	serviceMock := stubs.PingServiceStub{}
+	serviceMock.HandlePingFn = func() (string, error) {
 		return "", errors.New("error executing ping")
 	}
 	services.PingService = serviceMock
@@ -76,8 +69,8 @@ func TestPingNoError1(t *testing.T) {
 	expectedHttpStatus := http.StatusOK
 	expectedHttpBody := "{\"message\":\"pong\"}"
 
-	serviceMock := pingServiceMock{}
-	serviceMock.handlePingFn = func() (string, error) {
+	serviceMock := stubs.PingServiceStub{}
+	serviceMock.HandlePingFn = func() (string, error) {
 		return "pong", nil
 	}
 	services.PingService = serviceMock
@@ -109,11 +102,11 @@ func (suite *PingTestSuite) Test_Ping_Return200() {
 	expectedHttpBody := "{\"message\":\"pong\"}"
 	// expectedHttpBody := "pong"
 
-	suite.ServiceMock = pingServiceMock{}
-	suite.ServiceMock.handlePingFn = func() (string, error) {
+	suite.PingServiceStub = stubs.PingServiceStub{}
+	suite.PingServiceStub.HandlePingFn = func() (string, error) {
 		return "pong", nil
 	}
-	services.PingService = suite.ServiceMock
+	services.PingService = suite.PingServiceStub
 
 	PingController.Ping(suite.GinContextPointer)
 

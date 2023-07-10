@@ -14,9 +14,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var (
-	UserController = userController{}
-)
+var UserController = userController{}
 
 type userController struct{}
 
@@ -26,6 +24,7 @@ func (controller userController) RegisterUser(c *gin.Context) {
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
 			errorMessage := errorhandling.ValidationErrorsMessage{Message: errorhandling.NewJSONFormatter().Descriptive(verr)}
+			
 			c.JSON(http.StatusBadRequest, errorMessage)
 			c.Abort()
 			return
