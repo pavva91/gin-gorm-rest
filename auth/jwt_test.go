@@ -25,13 +25,8 @@ type AuthJWTTestSuite struct {
 	ExpiredToken       string
 	InvalidString      string
 	EmptyString        string
-	NonEmptyString     string
-	ZeroString         int
-	NonZeroString      int
 }
 
-// Make sure that VariableThatShouldStartAtFive is set to five
-// before each test
 func (suite *AuthJWTTestSuite) SetupTest() {
 	suite.Email = "alice@wonder.land"
 	suite.Username = "alice1234"
@@ -39,9 +34,6 @@ func (suite *AuthJWTTestSuite) SetupTest() {
 	suite.ExpiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJvYjk3IiwiZW1haWwiOiJib2JAZ21haWwuY29tIiwiZXhwIjoxNjgyNTIyNjIxLCJuYmYiOi02MjEzNTU5NjgwMCwiaWF0IjotNjIxMzU1OTY4MDB9.hEl-RlgpbDMuNa7zYSL-csCqY4oZwOMG3CsrtURbiyU"
 	suite.InvalidString = "invalid string"
 	suite.EmptyString = ""
-	suite.NonEmptyString = "asdf"
-	suite.ZeroString = 0
-	suite.NonZeroString = 1
 }
 
 func (suite *AuthJWTTestSuite) Test_GenerateJWT_Good_ReturnTokenString() {

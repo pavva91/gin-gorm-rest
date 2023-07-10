@@ -120,6 +120,10 @@ In code import:
 - Run specific tests (regex) of a module (e.g. controllers): `go test -run Test_GenerateToken ./controllers`
 - Run tests of a folder (e.g. validation): `go test ./validation`
 - Run tests of a module (e.g. validation): `go test github.com/pavva91/gin-gorm-rest/validation`
+- Run particular test (e.g. test Test_GetByID_EmptyId_400BadRequest in /controllers/user_test.go): `go test -v ./... -run Test_GetByID_EmptyId_400BadRequest`
+- Run particular test (e.g. test Test_GetByID_EmptyId_400BadRequest in /controllers/user_test.go): `go test -v ./controllers -run Test_GetByID_EmptyId_400BadRequest`
+- Run particular test with code coverage report (e.g. test Test_GetByID_EmptyId_400BadRequest in /controllers/user_test.go): `go test -v -coverprofile cover.out ./controllers -run Test_GetByID_EmptyId_400BadRequest && go tool cover -html=cover.out`
+- Run particular test when using test suite (e.g. test Test_Status_Return200 in TestSuiteHealthController in /controllers/health_test.go): `go test -v ./controllers -run TestSuiteHealthController -testify.m Test_Status_Return200`
 
 ### Code Structure to enable Unit Tests (testeable code)
 - [Code samples](https://github.com/federicoleon/golang-examples/tree/master/testeable_code)
