@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/pavva91/gin-gorm-rest/db"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/pavva91/gin-gorm-rest/repositories"
 )
 
 var (
@@ -21,36 +21,25 @@ type userService interface {
 type userServiceImpl struct{}
 
 func (service userServiceImpl) ListUsers() ([]models.User, error) {
-	users := []models.User{}
-	db.GetDB().Find(&users)
-	return users, nil
+	return repositories.UserRepository.ListUsers()
 }
 
 func (service userServiceImpl) GetByID(id string) (*models.User, error) {
-	var user *models.User
-	db.GetDB().Where("id = ?", id).First(&user)
-	return user, nil
+	return repositories.UserRepository.GetByID(id)
 }
 
 func (service userServiceImpl) GetByEmail(email string) (*models.User, error) {
-	var user *models.User
-	db.GetDB().Where("email = ?", email).First(&user)
-	return user, nil
+	return repositories.UserRepository.GetByEmail(email)
 }
 
 func (service userServiceImpl) GetByUsername(username string) (*models.User, error) {
-	var user *models.User
-	db.GetDB().Where("username = ?", username).First(&user)
-	return user, nil
+	return repositories.UserRepository.GetByUsername(username)
 }
 
 func (service userServiceImpl) Update(user *models.User) (*models.User, error) {
-	db.GetDB().Save(&user)
-	return user, nil
+	return repositories.UserRepository.Update(user)
 }
 
 func (service userServiceImpl) Delete(id string) (*models.User, error) {
-	var user *models.User
-	db.GetDB().Where("id = ?", id).Delete(&user)
-	return user, nil
+	return repositories.UserRepository.Delete(id)
 }
