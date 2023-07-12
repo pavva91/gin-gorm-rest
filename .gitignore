@@ -22,3 +22,8 @@ go.work
 
 # Air temporary directory
 tmp
+
+# Server Configuration files
+config/dev-config.yml
+config/stage-config.yml
+config/prod-config.yml
