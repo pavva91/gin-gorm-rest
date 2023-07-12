@@ -10,6 +10,7 @@ var (
 )
 
 type userService interface {
+	CreateUser(user *models.User) (*models.User, error)
 	ListUsers() ([]models.User, error)
 	GetByID(id string) (*models.User, error)
 	GetByEmail(email string) (*models.User, error)
@@ -19,6 +20,10 @@ type userService interface {
 }
 
 type userServiceImpl struct{}
+
+func (service userServiceImpl) CreateUser(user *models.User) (*models.User, error) {
+	return repositories.UserRepository.CreateUser(user)
+}
 
 func (service userServiceImpl) ListUsers() ([]models.User, error) {
 	return repositories.UserRepository.ListUsers()
