@@ -23,7 +23,10 @@ type userRepositoryImpl struct{}
 
 func (repository userRepositoryImpl) CreateUser(user *models.User) (*models.User, error) {
 	err := db.DbOrm.GetDB().Create(&user).Error
-	return user, err
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (repository userRepositoryImpl) ListUsers() ([]models.User, error) {
