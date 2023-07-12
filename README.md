@@ -140,6 +140,8 @@ In code import:
 - Run all tests and create code coverage report: `go test -v -coverprofile cover.out ./...`
 - Run all tests with code coverage and open on browser: `go test -v -coverprofile cover.out ./... && go tool cover -html=cover.out`
 - Run tests of /controllers with code coverage and open on browser: `go test -v -coverprofile cover.out ./controllers/ && go tool cover -html=cover.out`
+- Run tests of /services with code coverage and open on browser: `go test -v -coverprofile cover.out ./services/ && go tool cover -html=cover.out`
+- Run tests of /repositories with code coverage and open on browser: `go test -v -coverprofile cover.out ./repositories/ && go tool cover -html=cover.out`
 - Run specific tests (regex): `go test -run TestMyFunction ./...`
 - Run specific tests (regex): `go test -run Test_GenerateToken_InvalidRequestBodyNoPasswordField_400BadRequest ./...`
 - Run specific tests (regex) of a module (e.g. controllers): `go test -run Test_GenerateToken ./controllers`
