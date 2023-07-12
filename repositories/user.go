@@ -10,6 +10,7 @@ var (
 )
 
 type userRepository interface {
+	CreateUser(user *models.User) (*models.User, error)
 	ListUsers() ([]models.User, error)
 	GetByID(id string) (*models.User, error)
 	GetByEmail(email string) (*models.User, error)
@@ -19,6 +20,11 @@ type userRepository interface {
 }
 
 type userRepositoryImpl struct{}
+
+func (repository userRepositoryImpl) CreateUser(user *models.User) (*models.User, error) {
+	err := db.DbOrm.GetDB().Create(&user).Error
+	return user, err
+}
 
 func (repository userRepositoryImpl) ListUsers() ([]models.User, error) {
 	users := []models.User{}
