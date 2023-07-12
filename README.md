@@ -9,9 +9,33 @@ for:
 
 Have a template for starting a REST API with ORM integration and hot reload with go air.
 
-## Video
+## Run Environments
 
-https://yewtu.be/watch?v=ZI6HaPKHYsg
+Setup 3 environments: dev, stage and prod
+
+### Run Dev Environment
+
+#### Run DB (terminal 1)
+
+1. cd docker/dev
+2. docker compose up
+
+##### Enter PostgreSQL DB (terminal 2)
+
+1. docker exec -it dev-db-1 bash
+2. su - postgres
+3. psql -h localhost -p 5432 -U <user> <db_name>
+4. psql -h localhost -p 5432 -U postgres postgres
+5. \l : list DBs
+6. \c <db_name> : connect to DB
+7. \dt : list all the tables
+8. select \* from <table_name>;
+9. select \* from users;
+
+#### Run Go REST API Service (terminal 3)
+
+1. cd <project_root>
+2. SERVER_ENVIRONMENT="dev" go run main.go
 
 ## REST API
 
@@ -109,12 +133,13 @@ In code import:
 
 - `import "github.com/go-playground/validator/v10" `
 
-## Tests
+## Unit Tests
 
 - `go get -u github.com/stretchr/testify`
 - Run all tests: `go test ./...`
 - Run all tests and create code coverage report: `go test -v -coverprofile cover.out ./...`
 - Run all tests with code coverage and open on browser: `go test -v -coverprofile cover.out ./... && go tool cover -html=cover.out`
+- Run tests of /controllers with code coverage and open on browser: `go test -v -coverprofile cover.out ./controllers/ && go tool cover -html=cover.out`
 - Run specific tests (regex): `go test -run TestMyFunction ./...`
 - Run specific tests (regex): `go test -run Test_GenerateToken_InvalidRequestBodyNoPasswordField_400BadRequest ./...`
 - Run specific tests (regex) of a module (e.g. controllers): `go test -run Test_GenerateToken ./controllers`
@@ -126,15 +151,19 @@ In code import:
 - Run particular test when using test suite (e.g. test Test_Status_Return200 in TestSuiteHealthController in /controllers/health_test.go): `go test -v ./controllers -run TestSuiteHealthController -testify.m Test_Status_Return200`
 
 ### Code Structure to enable Unit Tests (testeable code)
+
 - [Code samples](https://github.com/federicoleon/golang-examples/tree/master/testeable_code)
 
 ### Code Coverage
-- By package name: 
+
+- By package name:
+
   - Just run: `go test -cover github.com/pavva91/gin-gorm-rest/validation`
   - Create coverage file: `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/validation`
   - One Command create coverage file and open in browser; `go test -v -coverprofile cover.out github.com/pavva91/gin-gorm-rest/controllers && go tool cover -html=cover.out`
 
 - By folder:
+
   - Just run: `go test -cover ./validation`
   - Create coverage file: `go test -v -coverprofile cover.out ./validation`
   - Open coverage file on browser: `go tool cover -html=cover.out`
@@ -146,16 +175,25 @@ In code import:
   - Open coverage file on browser: `go tool cover -html=coverage.out`
 
 From [stack overflow](https://stackoverflow.com/questions/10516662/how-to-measure-test-coverage-in-go)
+
 1. Create function in ~/.bashrc and/or ~/.zshrc:
-  ```bash
-  cover () {
-    t="/tmp/go-cover.$$.tmp"
-    go test -coverprofile=$t $@ && go tool cover -html=$t && unlink $t
-  }
-  ```
-2. Call this function: 
-  - `cd ~/go/src/github.com/pavva91/gin-gorm-rest/ `
-  - `cover github.com/pavva91/gin-gorm-rest/validation`
+
+```bash
+cover () {
+  t="/tmp/go-cover.$$.tmp"
+  go test -coverprofile=$t $@ && go tool cover -html=$t && unlink $t
+}
+```
+
+2. Call this function:
+
+- `cd ~/go/src/github.com/pavva91/gin-gorm-rest/ `
+- `cover github.com/pavva91/gin-gorm-rest/validation`
+
+### Run Unit Test with Debugger
+
+- :lua require('dap-go').debug_test()
+- Keymap: <leader>dt
 
 ## cURL Calls
 
