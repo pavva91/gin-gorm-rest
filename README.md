@@ -22,20 +22,20 @@ Setup 3 environments: dev, stage and prod
 
 ##### Enter PostgreSQL DB (terminal 2)
 
-1. docker exec -it dev-db-1 bash
-2. su - postgres
-3. psql -h localhost -p 5432 -U <user> <db_name>
-4. psql -h localhost -p 5432 -U postgres postgres
-5. \l : list DBs
-6. \c <db_name> : connect to DB
-7. \dt : list all the tables
-8. select \* from <table_name>;
-9. select \* from users;
+1. `docker exec -it dev-db-1 bash`
+2. `su - postgres`
+3. `psql -h localhost -p 5432 -U <user> <db_name>`
+4. `psql -h localhost -p 5432 -U postgres postgres`
+5. `\l` : list DBs
+6. `\c <db_name>` : connect to DB
+7. `\dt` : list all the tables
+8. `select \* from <table_name>;`
+9. `select \* from users;`
 
 #### Run Go REST API Service (terminal 3)
 
-1. cd <project_root>
-2. SERVER_ENVIRONMENT="dev" go run main.go
+1. `cd <project_root>`
+2. `SERVER_ENVIRONMENT="dev" go run main.go`
 
 ## REST API
 
@@ -47,8 +47,8 @@ Uses [GORM](https://gorm.io/)
 
 ## Format Code
 
-1. cd ~/go/src/github.com/pavva91/gin-gorm-rest/
-2. gofmt -l -s -w .
+1. `cd ~/go/src/github.com/pavva91/gin-gorm-rest/`
+2. `gofmt -l -s -w .`
 
 ## Hot Reload (air)
 
@@ -95,7 +95,7 @@ Uses [Clean Env](https://github.com/ilyakaznacheev/cleanenv):
 
 Uses [Swag](https://github.com/swaggo/swag#how-to-use-it-with-gin)
 
-- go install github.com/swaggo/swag/cmd/swag@latest
+- `go install github.com/swaggo/swag/cmd/swag@latest`
   Note: Go install tries to install the package into $GOBIN, when $GOBIN=/usr/local/go/bin will not work, works with $GOBIN=~/go/bin
   Initialize Swag (on project root):
 - `swag init`
