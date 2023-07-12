@@ -2,7 +2,9 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"github.com/rs/zerolog/log"
+
+	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/pavva91/gin-gorm-rest/config"
@@ -12,31 +14,55 @@ import (
 )
 
 func StartApplication() {
-	var cfg config.ServerConfig
+	env := os.Getenv("SERVER_ENVIRONMENT")
 
-	// Get Configs
-	err := cleanenv.ReadConfig("./config/config.yml", &cfg)
-	if err != nil {
-		log.Println(err)
+	log.Info().Msg(fmt.Sprintf("Running Environment: %s", env))
+
+	switch env {
+	case "dev":
+		err := cleanenv.ReadConfig("./config/dev-config.yml", &config.ServerConfigValues)
+		if err != nil {
+			log.Error().Msg(err.Error())
+		}
+	case "stage":
+		err := cleanenv.ReadConfig("./config/stage-config.yml", &config.ServerConfigValues)
+		if err != nil {
+			log.Error().Msg(err.Error())
+		}
+	case "prod":
+		err := cleanenv.ReadConfig("./config/prod-config.yml", &config.ServerConfigValues)
+		if err != nil {
+			log.Err(err).Msg(err.Error())
+		}
+	default:
+		log.Error().Msg(fmt.Sprintf("Incorrect Dev Environment: %s\nInterrupt execution", env))
+		os.Exit(1)
 	}
 
 	// Set Swagger Info
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "Insert here REST API Description"
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.BasePath = fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
-	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
+	docs.SwaggerInfo.Version = "0.0.1"
+	docs.SwaggerInfo.BasePath = fmt.Sprintf("/%s/%s", config.ServerConfigValues.Server.ApiPath, config.ServerConfigValues.Server.ApiVersion)
+	docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", config.ServerConfigValues.Server.Host, config.ServerConfigValues.Server.Port)
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	// Connect to DB
-	db.DbOrm.ConnectToDB(cfg)
+	db.DbOrm.ConnectToDB(config.ServerConfigValues)
 	db.DbOrm.GetDB().AutoMigrate(&models.User{}, &models.Event{})
 
-	// Create Router
-	router := NewRouter(cfg)
+	inititalizeDb()
 
-	MapUrls(cfg)
+	// Create Router
+	router := NewRouter()
+
+	MapUrls()
 
 	// Start Server
-	router.Run(cfg.Server.Host + ":" + cfg.Server.Port)
+	// router.Run(config.ServerConfigValues.Server.Host + ":" + config.ServerConfigValues.Server.Port)
+	router.Run(":" + config.ServerConfigValues.Server.Port)
+}
+
+func inititalizeDb() {
+	
 }

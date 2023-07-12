@@ -2,44 +2,49 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/config"
+	"github.com/rs/zerolog/log"
 )
 
 var (
 	router = gin.Default()
 )
 
-func NewRouter(cfg config.ServerConfig) *gin.Engine {
+func NewRouter() *gin.Engine {
 
-	// router := gin.Default()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
 	// CORS Configs based on SERVER_ENVIRONMENT variable
-	switch env := cfg.Server.Environment; env {
+	switch env := config.ServerConfigValues.Server.Environment; env {
 	case "dev":
-		router.Use(cors.Default())
+		corsConfigDev := cors.DefaultConfig()
+		corsConfigDev.AllowAllOrigins = true
+		corsConfigDev.AllowHeaders = append(corsConfigDev.AllowHeaders, "Authorization")
+		router.Use(cors.New(corsConfigDev))
 	case "stage":
-		log.Println("TODO: Stage environment Setup, for now allow all CORS")
-		router.Use(cors.Default())
+		log.Info().Msg("TODO: Stage environment Setup, for now allow all CORS")
+		corsConfigStage := cors.DefaultConfig()
+		corsConfigStage.AllowAllOrigins = true
+		corsConfigStage.AllowHeaders = append(corsConfigStage.AllowHeaders, "Authorization")
+		router.Use(cors.New(corsConfigStage))
 	case "prod":
-		cors_config := cors.DefaultConfig()
-		cors_config.AllowOrigins = cfg.Server.CorsAllowedClients
-		router.Use(cors.New(cors_config))
+		corsConfigProd := cors.DefaultConfig()
+		corsConfigProd.AllowOrigins = config.ServerConfigValues.Server.CorsAllowedClients
+		router.Use(cors.New(corsConfigProd))
 	default:
-		log.Printf("Incorrect Dev Environment: %s\nInterrupt execution", env)
+		log.Error().Msg(fmt.Sprintf("Incorrect Dev Environment: %s\nInterrupt execution", env))
 		os.Exit(1)
 	}
 
 	return router
 }
 
-func MapUrls(cfg config.ServerConfig) {
-	apiVersion := fmt.Sprintf("/%s/%s", cfg.Server.ApiPath, cfg.Server.ApiVersion)
+func MapUrls() {
+	apiVersion := fmt.Sprintf("/%s/%s", config.ServerConfigValues.Server.ApiPath, config.ServerConfigValues.Server.ApiVersion)
 	mapUrls(apiVersion)
 }
