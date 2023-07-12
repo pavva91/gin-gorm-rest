@@ -41,7 +41,7 @@ func (controller userController) RegisterUser(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	record := db.GetDB().Create(&user)
+	record := db.DbOrm.GetDB().Create(&user)
 	if record.Error != nil {
 		errorMessage := errorhandling.SimpleErrorMessage{Message: record.Error.Error()}
 		c.JSON(http.StatusInternalServerError, errorMessage)
@@ -98,7 +98,7 @@ func (controller userController) GetUser(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user models.User
 	c.BindJSON(&user)
-	db.GetDB().Create(&user)
+	db.DbOrm.GetDB().Create(&user)
 	c.JSON(http.StatusCreated, &user)
 }
 

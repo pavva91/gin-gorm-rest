@@ -29,8 +29,8 @@ func StartApplication() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	// Connect to DB
-	db.ConnectToDB(cfg)
-	db.GetDB().AutoMigrate(&models.User{}, &models.Event{})
+	db.DbOrm.ConnectToDB(cfg)
+	db.DbOrm.GetDB().AutoMigrate(&models.User{}, &models.Event{})
 
 	// Create Router
 	router := NewRouter(cfg)

@@ -9,9 +9,20 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+var (
+	DbOrm DbOrmInterface = dbOrmImpl{}
+)
+
+type DbOrmInterface interface {
+	ConnectToDB(cfg config.ServerConfig)
+	GetDB() *gorm.DB
+}
+
+type dbOrmImpl struct{}
+
 var database *gorm.DB
 
-func ConnectToDB(cfg config.ServerConfig) {
+func (dbOrm dbOrmImpl) ConnectToDB(cfg config.ServerConfig) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", cfg.Database.Host, cfg.Database.Username, cfg.Database.Password, cfg.Database.Name, cfg.Database.Port)
 
 	db, err := gorm.Open(postgres.Open(dsn))
@@ -29,6 +40,6 @@ func ConnectToDB(cfg config.ServerConfig) {
 // 	database.AutoMigrate(&models.User{}, &models.Event{})
 // }
 
-func GetDB() *gorm.DB {
+func (dbOrm dbOrmImpl) GetDB() *gorm.DB {
 	return database
 }
