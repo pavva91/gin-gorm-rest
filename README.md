@@ -209,3 +209,27 @@ cover () {
   - `curl -X PUT http://127.0.0.1:8080/users/1 -H 'Content-Type: application/json' -d '{"name":"john", "email":"john@dhl.be", "password":"5678"}'`
 - Delete a user: DELETE /users/1:
   - `curl -X DELETE http://127.0.0.1:8080/users/1`
+
+## DB Management
+
+### DB Management inside neovim (dadbod)
+
+DB Management inside neovim through dadbod ([tpope/vim-dadbod](https://github.com/tpope/vim-dadbod), [kristijanhusak/vim-dadbod-ui](https://github.com/kristijanhusak/vim-dadbod-ui), [kristijanhusak/vim-dadbod-completion](https://github.com/kristijanhusak/vim-dadbod-completion)):
+
+1. :DBUI (\<leader\>db is :DBUIToggle)
+2. Connection to db (Add connection):
+   - postgres://\<user\>:\<password\>@localhost:\<port\>/\<db_name\>
+3. In case of default values (dev db)
+   - postgres://postgres:localhost@localhost:5432/postgres
+
+### PostgreSQL Database
+
+#### SQL
+
+```sql
+
+
+SELECT name, username, email FROM users WHERE "name" = 'Bob'
+
+
+```
