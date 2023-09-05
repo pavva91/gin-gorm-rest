@@ -226,10 +226,16 @@ DB Management inside neovim through dadbod ([tpope/vim-dadbod](https://github.co
 
 #### SQL
 
+Queries:
+
+1.
+
 ```sql
+SELECT * FROM users
+```
 
+2.
 
+```sql
 SELECT name, username, email FROM users WHERE "name" = 'Bob'
-
-
 ```
