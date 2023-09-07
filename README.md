@@ -37,6 +37,20 @@ Setup 3 environments: dev, stage and prod
 1. `cd <project_root>`
 2. `SERVER_ENVIRONMENT="dev" go run main.go`
 
+##### NOTE on go run
+
+Running:
+
+```bash
+go run main.go
+```
+
+is the same as:
+
+```bash
+go build -o out && ./out
+```
+
 ## REST API
 
 Uses [Gin-Gonic](https://gin-gonic.com/docs/)
@@ -92,6 +106,12 @@ Uses [Clean Env](https://github.com/ilyakaznacheev/cleanenv):
 - go get -u github.com/ilyakaznacheev/cleanenv
 
 ## Swagger Docs (Swag)
+
+### TL;DR
+
+```bash
+swag fmt && swag init
+```
 
 Uses [Swag](https://github.com/swaggo/swag#how-to-use-it-with-gin)
 
