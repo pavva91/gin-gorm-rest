@@ -25,6 +25,7 @@ type eventServiceImpl struct{}
 
 func (service eventServiceImpl) ListAllEvents() ([]models.Event, error) {
 	var events []models.Event
+	// TODO: Use Repository
 	db.DbOrm.GetDB().Find(&events)
 	return events, nil
 }
