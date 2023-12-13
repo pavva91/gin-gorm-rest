@@ -34,15 +34,15 @@ var validationUtility = new(validation.ValidationUtility)
 //	@Success		200	{array}	models.Event
 //	@Router			/events [get]
 //	@Schemes
-func (controller eventController) ListEvents(context *gin.Context) {
+func (controller eventController) ListEvents(c *gin.Context) {
 	events, err := services.EventService.ListAllEvents()
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
-		context.Abort()
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
+		c.Abort()
 		return
 	}
-	context.JSON(http.StatusOK, &events)
-	context.Abort()
+	c.JSON(http.StatusOK, &events)
+	c.Abort()
 	return
 }
 
