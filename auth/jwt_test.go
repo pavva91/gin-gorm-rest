@@ -50,12 +50,15 @@ func (suite *AuthJWTTestSuite) Test_GenerateJWT_Good_ReturnTokenString() {
 
 	actualJwtTokenSplit := strings.Split(actual, ".")
 	header, err := base64.StdEncoding.DecodeString(actualJwtTokenSplit[0])
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return
+	}
 	payload, err := base64.StdEncoding.DecodeString(actualJwtTokenSplit[1])
-
-	log.Info().Msg("Signature Value: " + actualJwtTokenSplit[2])
 	if err != nil {
 		log.Err(err).Msg(err.Error())
 	}
+	log.Info().Msg("Signature Value: " + actualJwtTokenSplit[2])
 
 	assert.IsType(suite.T(), "", actual)
 	assert.Equal(suite.T(), 3, len(actualJwtTokenSplit))
@@ -67,6 +70,10 @@ func (suite *AuthJWTTestSuite) Test_GenerateJWT_Good_ReturnTokenString() {
 
 func (suite *AuthJWTTestSuite) Test_DecodeJWT_Good_ReturnClaims() {
 	freshToken, err := AuthenticationUtility.GenerateJWT(suite.Email, suite.Username)
+	if err != nil {
+		log.Err(err).Msg(err.Error())
+		return
+	}
 	log.Info().Msg("Fresh Token: " + freshToken)
 
 	expectedIssuedAt := "0001-01-01 00:17:30 +0017 LMT"

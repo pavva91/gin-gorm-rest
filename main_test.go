@@ -38,8 +38,8 @@ func TestPingPongUnsecured(t *testing.T) {
 	}
 
 	// Grab our router
-	router := server.NewRouter(cfg)
-	server.MapUrls(cfg)
+	router := server.NewRouter()
+	server.MapUrls()
 
 	// Perform a GET request with that handler.
 	// w := performRequest(router, "GET", "/api/v1/ping")
@@ -50,7 +50,7 @@ func TestPingPongUnsecured(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	// Convert the JSON response to a map
 	var response map[string]string
-	err = json.Unmarshal([]byte(w.Body.String()), &response)
+	err = json.Unmarshal(w.Body.Bytes(), &response)
 	// Grab the value & whether or not it exists
 	value, exists := response["message"]
 	// Make some assertions on the correctness of the response.
@@ -75,7 +75,7 @@ func TestPingPongSecuredWithoutJWT(t *testing.T) {
 	}
 
 	// Grab our router
-	router := server.NewRouter(cfg)
+	router := server.NewRouter()
 	// server.MapUrls(cfg)
 
 	// Perform a GET request with that handler.
@@ -88,7 +88,7 @@ func TestPingPongSecuredWithoutJWT(t *testing.T) {
 
 	// Convert the JSON response to a map
 	var response map[string]string
-	err = json.Unmarshal([]byte(w.Body.String()), &response)
+	err = json.Unmarshal(w.Body.Bytes(), &response)
 	// Grab the value & whether or not it exists
 	value, exists := response["error"]
 	// Make some assertions on the correctness of the response.

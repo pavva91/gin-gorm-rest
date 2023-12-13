@@ -5,10 +5,6 @@ import (
 	"github.com/pavva91/gin-gorm-rest/models"
 )
 
-const (
-	pang = "pang"
-)
-
 var (
 	EventService eventService = eventServiceImpl{}
 )

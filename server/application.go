@@ -49,7 +49,11 @@ func StartApplication() {
 
 	// Connect to DB
 	db.DbOrm.ConnectToDB(config.ServerConfigValues)
-	db.DbOrm.GetDB().AutoMigrate(&models.User{}, &models.Event{})
+	err := db.DbOrm.GetDB().AutoMigrate(&models.User{}, &models.Event{})
+	if err != nil {
+		log.Err(err).Msg("Error Automigrating DB")
+		return
+	}
 
 	inititalizeDb()
 
@@ -60,7 +64,11 @@ func StartApplication() {
 
 	// Start Server
 	// router.Run(config.ServerConfigValues.Server.Host + ":" + config.ServerConfigValues.Server.Port)
-	router.Run(":" + config.ServerConfigValues.Server.Port)
+	err = router.Run(":" + config.ServerConfigValues.Server.Port)
+	if err != nil {
+		log.Err(err).Msg("Error Starting Router")
+		return
+	}
 }
 
 func inititalizeDb() {

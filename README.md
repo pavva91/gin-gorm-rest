@@ -153,6 +153,14 @@ In code import:
 
 - `import "github.com/go-playground/validator/v10" `
 
+## Linter
+
+On project root run:
+
+```bash
+golangci-lint run
+```
+
 ## Unit Tests
 
 - `go get -u github.com/stretchr/testify`

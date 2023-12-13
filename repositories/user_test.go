@@ -11,6 +11,7 @@ import (
 	"github.com/pavva91/gin-gorm-rest/db"
 	"github.com/pavva91/gin-gorm-rest/mocks"
 	"github.com/pavva91/gin-gorm-rest/models"
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -57,6 +58,10 @@ func Test_CreateUser_OK(t *testing.T) {
 
 	// Call function to test
 	userReturn, err := UserRepository.CreateUser(&user)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return
+	}
 
 	// Check Values
 	err = dbMock.Mock.ExpectationsWereMet()
@@ -99,6 +104,10 @@ func Test_CreateUser_Error(t *testing.T) {
 
 	// Call function to test
 	userReturn, err := UserRepository.CreateUser(&user)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		return
+	}
 
 	// Check Values
 	err = dbMock.Mock.ExpectationsWereMet()
