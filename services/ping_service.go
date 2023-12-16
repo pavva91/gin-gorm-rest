@@ -9,16 +9,16 @@ const (
 )
 
 var (
-	PingService pingService = pingServiceImpl{}
+	Ping pingServicer = ping{}
 )
 
-type pingService interface {
+type pingServicer interface {
 	HandlePing() (string, error)
 }
 
-type pingServiceImpl struct{}
+type ping struct{}
 
-func (service pingServiceImpl) HandlePing() (string, error) {
+func (s ping) HandlePing() (string, error) {
 	fmt.Println("doing some complex things...")
 	return pong, nil
 }

@@ -41,12 +41,12 @@ func TestPingWithError(t *testing.T) {
 	serviceMock.HandlePingFn = func() (string, error) {
 		return "", errors.New("error executing ping")
 	}
-	services.PingService = serviceMock
+	services.Ping = serviceMock
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	PingController.Ping(context)
+	Ping.Ping(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -73,12 +73,12 @@ func TestPingNoError1(t *testing.T) {
 	serviceMock.HandlePingFn = func() (string, error) {
 		return "pong", nil
 	}
-	services.PingService = serviceMock
+	services.Ping = serviceMock
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	PingController.Ping(context)
+	Ping.Ping(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -106,9 +106,9 @@ func (suite *PingTestSuite) Test_Ping_Return200() {
 	suite.PingServiceStub.HandlePingFn = func() (string, error) {
 		return "pong", nil
 	}
-	services.PingService = suite.PingServiceStub
+	services.Ping = suite.PingServiceStub
 
-	PingController.Ping(suite.GinContextPointer)
+	Ping.Ping(suite.GinContextPointer)
 
 	actualHttpStatus := suite.GinContextPointer.Writer.Status()
 	actualHttpBody := suite.W.Body.String()

@@ -155,10 +155,17 @@ In code import:
 
 ## Linter
 
-On project root run:
+The linter will help to write idiomatic go. On project root run:
 
 ```bash
 golangci-lint run
+```
+
+The linter configuration is: `.golangci.yml`
+
+```yaml
+linters:
+  enable-all: true
 ```
 
 ## Unit Tests

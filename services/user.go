@@ -6,45 +6,45 @@ import (
 )
 
 var (
-	UserService userService = userServiceImpl{}
+	User userServicer = userServiceImpl{}
 )
 
-type userService interface {
-	CreateUser(user *models.User) (*models.User, error)
-	ListUsers() ([]models.User, error)
+type userServicer interface {
+	Create(u *models.User) (*models.User, error)
+	List() ([]models.User, error)
 	GetByID(id string) (*models.User, error)
 	GetByEmail(email string) (*models.User, error)
 	GetByUsername(username string) (*models.User, error)
-	Update(user *models.User) (*models.User, error)
+	Update(u *models.User) (*models.User, error)
 	Delete(id string) (*models.User, error)
 }
 
 type userServiceImpl struct{}
 
-func (service userServiceImpl) CreateUser(user *models.User) (*models.User, error) {
-	return repositories.UserRepository.CreateUser(user)
+func (s userServiceImpl) Create(u *models.User) (*models.User, error) {
+	return repositories.UserRepository.CreateUser(u)
 }
 
-func (service userServiceImpl) ListUsers() ([]models.User, error) {
+func (s userServiceImpl) List() ([]models.User, error) {
 	return repositories.UserRepository.ListUsers()
 }
 
-func (service userServiceImpl) GetByID(id string) (*models.User, error) {
+func (s userServiceImpl) GetByID(id string) (*models.User, error) {
 	return repositories.UserRepository.GetByID(id)
 }
 
-func (service userServiceImpl) GetByEmail(email string) (*models.User, error) {
+func (s userServiceImpl) GetByEmail(email string) (*models.User, error) {
 	return repositories.UserRepository.GetByEmail(email)
 }
 
-func (service userServiceImpl) GetByUsername(username string) (*models.User, error) {
+func (s userServiceImpl) GetByUsername(username string) (*models.User, error) {
 	return repositories.UserRepository.GetByUsername(username)
 }
 
-func (service userServiceImpl) Update(user *models.User) (*models.User, error) {
-	return repositories.UserRepository.Update(user)
+func (s userServiceImpl) Update(u *models.User) (*models.User, error) {
+	return repositories.UserRepository.Update(u)
 }
 
-func (service userServiceImpl) Delete(id string) (*models.User, error) {
+func (s userServiceImpl) Delete(id string) (*models.User, error) {
 	return repositories.UserRepository.Delete(id)
 }

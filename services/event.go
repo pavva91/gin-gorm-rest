@@ -6,44 +6,44 @@ import (
 )
 
 var (
-	EventService eventService = eventServiceImpl{}
+	Event eventService = event{}
 )
 
 type eventService interface {
 	ListAllEvents() ([]models.Event, error)
-	CreateEvent(event *models.Event) (*models.Event, error)
+	Create(e *models.Event) (*models.Event, error)
 	GetById(id string) (*models.Event, error)
 	DeleteById(id string) (*models.Event, error)
-	SaveEvent(event *models.Event) (*models.Event, error)
+	SaveEvent(e *models.Event) (*models.Event, error)
 }
 
-type eventServiceImpl struct{}
+type event struct{}
 
-func (service eventServiceImpl) ListAllEvents() ([]models.Event, error) {
+func (s event) ListAllEvents() ([]models.Event, error) {
 	var events []models.Event
 	// TODO: Use Repository
 	db.DbOrm.GetDB().Find(&events)
 	return events, nil
 }
 
-func (service eventServiceImpl) CreateEvent(event *models.Event) (*models.Event, error) {
-	db.DbOrm.GetDB().Create(&event)
-	return event, nil
+func (s event) Create(e *models.Event) (*models.Event, error) {
+	db.DbOrm.GetDB().Create(&e)
+	return e, nil
 }
 
-func (service eventServiceImpl) GetById(id string) (*models.Event, error) {
+func (s event) GetById(id string) (*models.Event, error) {
 	var event *models.Event
 	db.DbOrm.GetDB().Where("id = ?", id).First(&event)
 	return event, nil
 }
 
-func (service eventServiceImpl) DeleteById(id string) (*models.Event, error) {
+func (s event) DeleteById(id string) (*models.Event, error) {
 	var event *models.Event
 	db.DbOrm.GetDB().Where("id = ?", id).Delete(&event)
 	return event, nil
 }
 
-func (service eventServiceImpl) SaveEvent(event *models.Event) (*models.Event, error) {
-	db.DbOrm.GetDB().Save(&event)
-	return event, nil
+func (s event) SaveEvent(e *models.Event) (*models.Event, error) {
+	db.DbOrm.GetDB().Save(&e)
+	return e, nil
 }

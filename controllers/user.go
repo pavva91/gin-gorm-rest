@@ -14,17 +14,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var UserController = userController{}
+var User = &user{}
 
-type userController struct{}
+type user struct{}
 
-func (controller userController) RegisterUser(c *gin.Context) {
+func (controller user) RegisterUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
 			errorMessage := errorhandling.ValidationErrorsMessage{Message: errorhandling.NewJSONFormatter().Descriptive(verr)}
-			
+
 			c.JSON(http.StatusBadRequest, errorMessage)
 			c.Abort()
 			return
@@ -52,8 +52,8 @@ func (controller userController) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, &user)
 }
 
-func (controller userController) ListUsers(c *gin.Context) {
-	users, err := services.UserService.ListUsers()
+func (controller user) ListUsers(c *gin.Context) {
+	users, err := services.User.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list users", "error": err})
 		c.Abort()
@@ -62,7 +62,7 @@ func (controller userController) ListUsers(c *gin.Context) {
 	c.JSON(200, &users)
 }
 
-func (controller userController) GetUser(c *gin.Context) {
+func (controller user) GetUser(c *gin.Context) {
 	userId := c.Param("id")
 	if !validationUtility.IsEmpty(userId) {
 		if !validationUtility.IsInt64(userId) {
@@ -71,7 +71,7 @@ func (controller userController) GetUser(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		user, err := services.UserService.GetByID(userId)
+		user, err := services.User.GetByID(userId)
 		if err != nil {
 			r := errorhandling.SimpleErrorMessage{Message: "Error to get user"}
 			c.JSON(http.StatusInternalServerError, r)
@@ -95,15 +95,15 @@ func (controller userController) GetUser(c *gin.Context) {
 	return
 }
 
-func CreateUser(c *gin.Context) {
+func (controller user) CreateUser(c *gin.Context) {
 	var user models.User
 	c.BindJSON(&user)
 	db.DbOrm.GetDB().Create(&user)
 	c.JSON(http.StatusCreated, &user)
 }
 
-func DeleteUser(c *gin.Context) {
-	user, err := services.UserService.Delete(c.Param("id"))
+func (controller user) DeleteUser(c *gin.Context) {
+	user, err := services.User.Delete(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to delete user", "error": err})
 		c.Abort()
@@ -112,7 +112,7 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(200, &user)
 }
 
-func (controller userController) UpdateUser(context *gin.Context) {
+func (controller user) UpdateUser(context *gin.Context) {
 	// var newUser models.User
 	// Check user type requester
 	tokenString := context.GetHeader("Authorization")
@@ -123,9 +123,9 @@ func (controller userController) UpdateUser(context *gin.Context) {
 	}
 
 	log.Info().Msg("Username: " + claims.Username)
-	authenticatedUser, err := services.UserService.GetByUsername(claims.Username)
+	authenticatedUser, err := services.User.GetByUsername(claims.Username)
 
-	oldUser, err := services.UserService.GetByID(context.Param("id"))
+	oldUser, err := services.User.GetByID(context.Param("id"))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Error to get user", "error": err})
 		context.Abort()
@@ -140,7 +140,7 @@ func (controller userController) UpdateUser(context *gin.Context) {
 		return
 	}
 
-	services.UserService.Update(oldUser)
+	services.User.Update(oldUser)
 	// db.GetDB().Save(&user)
 	context.JSON(200, &oldUser)
 }

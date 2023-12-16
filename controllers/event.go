@@ -17,14 +17,14 @@ import (
 )
 
 var (
-	EventController = eventController{}
+	Event = &event{}
 )
 
-type eventController struct{}
+type event struct{}
 
 var validationUtility = new(validation.ValidationUtility)
 
-// ListEvents godoc
+// List godoc
 //
 //	@Summary		List Events
 //	@Description	List all the events
@@ -34,10 +34,10 @@ var validationUtility = new(validation.ValidationUtility)
 //	@Success		200	{array}	models.Event
 //	@Router			/events [get]
 //	@Schemes
-func (controller eventController) ListEvents(c *gin.Context) {
-	events, err := services.EventService.ListAllEvents()
+func (controller event) List(c *gin.Context) {
+	events, err := services.Event.ListAllEvents()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to list events", "error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "error to list events", "error": err})
 		c.Abort()
 		return
 	}
@@ -46,7 +46,7 @@ func (controller eventController) ListEvents(c *gin.Context) {
 	return
 }
 
-// GetEvent godoc
+// Get godoc
 //
 //	@Summary		Get Event
 //	@Description	Get event by id
@@ -57,21 +57,21 @@ func (controller eventController) ListEvents(c *gin.Context) {
 //	@Success		200			{object}	models.Event
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //	@Router			/events/{event_id} [get]
-func (controller eventController) GetEvent(c *gin.Context) {
+func (controller event) Get(c *gin.Context) {
 	// var event models.Event
 	eventId := c.Param("id")
 	// if eventId != "" {
 	if !validationUtility.IsEmpty(eventId) {
 		// _, err := strconv.ParseUint(eventId, 10, 64)
 		if !validationUtility.IsInt64(eventId) {
-			r := errorhandling.SimpleErrorMessage{Message: "Not valid parameter, Insert valid id"}
+			r := errorhandling.SimpleErrorMessage{Message: "not valid parameter, insert valid id"}
 			c.JSON(http.StatusBadRequest, r)
 			c.Abort()
 			return
 		}
-		event, err := services.EventService.GetById(eventId)
+		event, err := services.Event.GetById(eventId)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "Error to get event", "error": err})
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "error to get event", "error": err})
 			c.Abort()
 			return
 		}
@@ -96,7 +96,7 @@ func (controller eventController) GetEvent(c *gin.Context) {
 // 	Message string `json:"error"`
 // }
 
-// CreateEvent godoc
+// Create godoc
 //
 //	@Summary		Create Event
 //	@Description	Create a new Event
@@ -107,18 +107,18 @@ func (controller eventController) GetEvent(c *gin.Context) {
 //	@Success		200		{object}	models.Event
 //
 //	@Router			/events [post]
-func (controller eventController) CreateEvent(c *gin.Context) {
+func (controller event) Create(c *gin.Context) {
 	var event models.Event
 
 	tokenString := c.GetHeader("Authorization")
 
 	claims, err := auth.DecodeJWT(tokenString)
 	if err != nil {
-		log.Err(err).Msg("Unable to Decode JWT Token")
+		log.Err(err).Msg("unable to decode jwt token")
 	}
 
-	log.Info().Msg("Username: " + claims.Username)
-	user, err := services.UserService.GetByUsername(claims.Username)
+	log.Info().Msg("username: " + claims.Username)
+	user, err := services.User.GetByUsername(claims.Username)
 	event.UserID = int(user.ID)
 
 	err = c.ShouldBind(&event)
@@ -137,23 +137,9 @@ func (controller eventController) CreateEvent(c *gin.Context) {
 
 	}
 
-	services.EventService.CreateEvent(&event)
+	services.Event.Create(&event)
 	c.JSON(http.StatusOK, &event)
 }
-
-// func Simple(verr validator.ValidationErrors) map[string]string {
-// 	errs := make(map[string]string)
-//
-// 	for _, f := range verr {
-// 		err := f.ActualTag()
-// 		if f.Param() != "" {
-// 			err = fmt.Sprintf("%s=%s", err, f.Param())
-// 		}
-// 		errs[f.Field()] = err
-// 	}
-//
-// 	return errs
-// }
 
 // DeleteEvent godoc
 //
@@ -168,9 +154,9 @@ func (controller eventController) CreateEvent(c *gin.Context) {
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //
 //	@Router			/events/{event_id} [delete]
-func (controller eventController) DeleteEvent(c *gin.Context) {
+func (controller event) DeleteEvent(c *gin.Context) {
 	var event models.Event
-	services.EventService.DeleteById(c.Param("id"))
+	services.Event.DeleteById(c.Param("id"))
 	c.JSON(http.StatusOK, &event)
 }
 
@@ -188,19 +174,19 @@ func (controller eventController) DeleteEvent(c *gin.Context) {
 //	@Failure		404			{object}	errorhandling.ErrorMessage
 //
 //	@Router			/events/{event_id} [put]
-func (controller eventController) SubstituteEvent(c *gin.Context) {
+func (controller event) SubstituteEvent(c *gin.Context) {
 	var newEvent models.Event
 	eventId := c.Param("id")
 	if eventId != "" {
 		if !validationUtility.IsInt64(eventId) {
-			errorMessage := errorhandling.SimpleErrorMessage{Message: fmt.Sprintf("Not valid event id: %s - Insert valid id", eventId)}
+			errorMessage := errorhandling.SimpleErrorMessage{Message: fmt.Sprintf("not valid event id: %s - insert valid id", eventId)}
 			c.JSON(http.StatusBadRequest, errorMessage)
 			return
 		}
-		oldEvent, _ := services.EventService.GetById(eventId)
+		oldEvent, _ := services.Event.GetById(eventId)
 		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.ID), 10))
 		if oldEvent.ID == 0 {
-			errorMessage := errorhandling.SimpleErrorMessage{Message: "No event found!"}
+			errorMessage := errorhandling.SimpleErrorMessage{Message: "no event found!"}
 			c.JSON(http.StatusNotFound, errorMessage)
 			return
 		}
@@ -223,7 +209,7 @@ func (controller eventController) SubstituteEvent(c *gin.Context) {
 
 		newEvent.ID = oldEvent.ID
 		log.Info().Msg("retrieved Id: " + strconv.FormatInt(int64(oldEvent.ID), 10))
-		services.EventService.SaveEvent(&newEvent)
+		services.Event.SaveEvent(&newEvent)
 		c.JSON(http.StatusOK, &newEvent)
 	}
 }

@@ -21,12 +21,12 @@ func Test_ListEvents_Error_Error(t *testing.T) {
 	eventServiceStub.ListEventsFn = func() ([]models.Event, error) {
 		return nil, errors.New("error executing ping")
 	}
-	services.EventService = eventServiceStub
+	services.Event = eventServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	EventController.ListEvents(context)
+	Event.List(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -45,12 +45,12 @@ func Test_ListEvents_Empty_Empty(t *testing.T) {
 	eventServiceStub.ListEventsFn = func() ([]models.Event, error) {
 		return emptyEventList, nil
 	}
-	services.EventService = eventServiceStub
+	services.Event = eventServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
 
-	EventController.ListEvents(context)
+	Event.List(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()

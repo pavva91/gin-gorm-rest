@@ -31,6 +31,7 @@ func main() {
 	//	1. 2 (debug with argument)
 	//	2. d
 	isDebug := false
+
 	if len(os.Args) == 2 {
 		debugArg := os.Args[1]
 		if debugArg == "d" || debugArg == "debug" {

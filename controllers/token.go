@@ -7,24 +7,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/pavva91/gin-gorm-rest/auth"
+	"github.com/pavva91/gin-gorm-rest/dto"
 	"github.com/pavva91/gin-gorm-rest/errorhandling"
 	"github.com/pavva91/gin-gorm-rest/services"
 	"github.com/rs/zerolog/log"
 )
 
-type TokenRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 var (
-	TokenController = tokenController{}
+	JWT = &jwt{}
 )
 
-type tokenController struct{}
+type jwt struct{}
 
-func (controller tokenController) GenerateToken(c *gin.Context) {
-	var request TokenRequest
+func (controller jwt) GenerateToken(c *gin.Context) {
+	var request dto.TokenRequest
 	// var user models.User
 	if err := c.ShouldBindJSON(&request); err != nil {
 		var verr validator.ValidationErrors
@@ -35,13 +31,13 @@ func (controller tokenController) GenerateToken(c *gin.Context) {
 			return
 		}
 		log.Info().Err(err).Msg("unable to bind")
-		errorMessage := errorhandling.SimpleErrorMessage{Message: "Bad Request"}
+		errorMessage := errorhandling.SimpleErrorMessage{Message: "bad request"}
 		c.JSON(http.StatusBadRequest, errorMessage)
 		c.Abort()
 		return
 	}
 	// check if email exists and password is correct
-	user, err := services.UserService.GetByEmail(request.Email)
+	user, err := services.User.GetByEmail(request.Email)
 	if err != nil {
 		errorMessage := errorhandling.SimpleErrorMessage{Message: err.Error()}
 		c.JSON(http.StatusInternalServerError, errorMessage)
@@ -49,14 +45,14 @@ func (controller tokenController) GenerateToken(c *gin.Context) {
 		return
 	}
 	if user.ID == 0 {
-		errorMessage := errorhandling.SimpleErrorMessage{Message: "User not found"}
+		errorMessage := errorhandling.SimpleErrorMessage{Message: "user not found"}
 		c.JSON(http.StatusUnauthorized, errorMessage)
 		c.Abort()
 		return
 	}
 	credentialError := user.CheckPassword(request.Password)
 	if credentialError != nil {
-		errorMessage := errorhandling.SimpleErrorMessage{Message: "Invalid Credentials"}
+		errorMessage := errorhandling.SimpleErrorMessage{Message: "invalid credentials"}
 		c.JSON(http.StatusUnauthorized, errorMessage)
 		c.Abort()
 		return

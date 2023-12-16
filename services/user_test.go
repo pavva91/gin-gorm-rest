@@ -24,7 +24,7 @@ func Test_CreateUser_Error(t *testing.T) {
 	repositories.UserRepository = userRepositoryStub
 
 	// Call function to test
-	userReturn, err := UserService.CreateUser(&user)
+	userReturn, err := User.Create(&user)
 
 	// Check Values
 	assert.NotNil(t, err)
@@ -44,7 +44,7 @@ func Test_CreateUser_OK(t *testing.T) {
 	repositories.UserRepository = userRepositoryStub
 
 	// Call function to test
-	userReturn, err := UserService.CreateUser(&user)
+	userReturn, err := User.Create(&user)
 
 	// Check Values
 	assert.Nil(t, err)

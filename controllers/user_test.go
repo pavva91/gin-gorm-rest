@@ -23,7 +23,7 @@ func Test_GetByID_EmptyId_400BadRequest(t *testing.T) {
 	expectedHttpBody := "{\"error\":\"empty id\"}"
 
 	// Call functio to test
-	UserController.GetUser(context)
+	User.GetUser(context)
 
 	// Check Values
 	actualHttpStatus := context.Writer.Status()
@@ -45,7 +45,7 @@ func Test_GetByID_NoIntId_400BadRequest(t *testing.T) {
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
 	// Call function to test
-	UserController.GetUser(context)
+	User.GetUser(context)
 
 	// Check Values
 	actualHttpStatus := context.Writer.Status()
@@ -66,7 +66,7 @@ func Test_GetByID_InternalErrorGetById_500InternalServerError(t *testing.T) {
 	UserServiceStub.GetByIDFn = func() (*models.User, error) {
 		return nil, errors.New("error stub")
 	}
-	services.UserService = UserServiceStub
+	services.User = UserServiceStub
 
 	// Expected Result
 	expectedHttpStatus := http.StatusInternalServerError
@@ -74,7 +74,7 @@ func Test_GetByID_InternalErrorGetById_500InternalServerError(t *testing.T) {
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
 	// Call function to test
-	UserController.GetUser(context)
+	User.GetUser(context)
 
 	// Check Values
 	actualHttpStatus := context.Writer.Status()
@@ -99,7 +99,7 @@ func Test_GetByID_NotFoundId_404NotFound(t *testing.T) {
 	UserServiceStub.GetByIDFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = UserServiceStub
+	services.User = UserServiceStub
 
 	// Expected Values
 	expectedHttpStatus := http.StatusNotFound
@@ -107,7 +107,7 @@ func Test_GetByID_NotFoundId_404NotFound(t *testing.T) {
 	expectedHttpBody := "{\"error\":\"" + expectedError + "\"}"
 
 	// Call function to test
-	UserController.GetUser(context)
+	User.GetUser(context)
 
 	// Check Values
 	actualHttpStatus := context.Writer.Status()
@@ -136,14 +136,14 @@ func Test_GetByID_FoundId_200ReturnUser(t *testing.T) {
 	UserServiceStub.GetByIDFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = UserServiceStub
+	services.User = UserServiceStub
 
 	// Expected Values
 	expectedHttpStatus := http.StatusOK
 	expectedHttpBody := "{\"ID\":1,\"CreatedAt\":\"0001-01-01T00:00:00Z\",\"UpdatedAt\":\"0001-01-01T00:00:00Z\",\"DeletedAt\":null,\"name\":\"Kurt\",\"username\":\"user1234\",\"email\":\"\",\"password\":\"encrypted\",\"Events\":null}"
 
 	// Call function to test
-	UserController.GetUser(context)
+	User.GetUser(context)
 
 	// Check Values
 	actualHttpStatus := context.Writer.Status()

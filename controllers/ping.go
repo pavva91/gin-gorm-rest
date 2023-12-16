@@ -7,18 +7,18 @@ import (
 )
 
 var (
-	PingController = pingController{}
+	Ping = &ping{}
 )
 
-type pingController struct{}
+type ping struct{}
 
-func (controller pingController) Ping(context *gin.Context) {
-	result, err := services.PingService.HandlePing()
+func (controller ping) Ping(c *gin.Context) {
+	result, err := services.Ping.HandlePing()
 	if err != nil {
-		context.String(http.StatusInternalServerError, err.Error())
+		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"message": result})
+	c.JSON(http.StatusOK, gin.H{"message": result})
 
-	// context.String(http.StatusOK, result)
+	// c.String(http.StatusOK, result)
 }

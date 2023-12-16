@@ -3,7 +3,8 @@ package stubs
 import "github.com/pavva91/gin-gorm-rest/models"
 
 type UserServiceStub struct {
-	ListUsersFn     func() ([]models.User, error)
+	CreateFn        func() (*models.User, error)
+	ListFn          func() ([]models.User, error)
 	GetByIDFn       func() (*models.User, error)
 	GetByEmailFn    func() (*models.User, error)
 	GetByUsernameFn func() (*models.User, error)
@@ -11,8 +12,12 @@ type UserServiceStub struct {
 	DeleteFn        func() (*models.User, error)
 }
 
-func (stub UserServiceStub) ListUsers() ([]models.User, error) {
-	return stub.ListUsersFn()
+func (stub UserServiceStub) Create(*models.User) (*models.User, error) {
+	return stub.CreateFn()
+}
+
+func (stub UserServiceStub) List() ([]models.User, error) {
+	return stub.ListFn()
 }
 
 func (stub UserServiceStub) GetByID(id string) (*models.User, error) {

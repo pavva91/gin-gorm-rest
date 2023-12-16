@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO: Use DTO
 type Event struct {
 	gorm.Model  `swaggerignore:"true"`
 	Category    string    `json:"category" binding:"required"`

@@ -11,7 +11,7 @@ func mapUrls(apiVersion string) {
 	api := router.Group(apiVersion)
 	{
 		// unsecured calls
-		api.POST("/token", controllers.TokenController.GenerateToken)
+		api.POST("/token", controllers.JWT.GenerateToken)
 
 		// secured calls
 		secured := api.Group("secured").Use(middlewares.Auth())
@@ -20,32 +20,32 @@ func mapUrls(apiVersion string) {
 
 		healthGroup := api.Group("health")
 		{
-			healthGroup.GET("", controllers.HealthController.Status)
+			healthGroup.GET("", controllers.Health.Status)
 			// unsecured
-			api.GET("/ping", controllers.PingController.Ping)
+			api.GET("/ping", controllers.Ping.Ping)
 			// secured
-			secured.GET("/ping", controllers.PingController.Ping)
+			secured.GET("/ping", controllers.Ping.Ping)
 		}
 
 		usersGroup := api.Group("users")
 		{
-			usersGroup.POST("", controllers.UserController.RegisterUser)
-			usersGroup.GET("", controllers.UserController.ListUsers)
-			usersGroup.GET("/", controllers.UserController.ListUsers)
-			usersGroup.GET("/:id", controllers.UserController.GetUser)
-			usersGroup.PATCH("/:id", controllers.UserController.UpdateUser)
+			usersGroup.POST("", controllers.User.RegisterUser)
+			usersGroup.GET("", controllers.User.ListUsers)
+			usersGroup.GET("/", controllers.User.ListUsers)
+			usersGroup.GET("/:id", controllers.User.GetUser)
+			usersGroup.PATCH("/:id", controllers.User.UpdateUser)
 		}
 		eventsGroup := api.Group("events")
 		{
-			eventsGroup.GET("", controllers.EventController.ListEvents)
-			eventsGroup.GET("/", controllers.EventController.ListEvents)
-			eventsGroup.GET("/:id", controllers.EventController.GetEvent)
+			eventsGroup.GET("", controllers.Event.List)
+			eventsGroup.GET("/", controllers.Event.List)
+			eventsGroup.GET("/:id", controllers.Event.Get)
 		}
 		securedEventsGroup := eventsGroup.Use(middlewares.Auth())
 		{
-			securedEventsGroup.POST("/", controllers.EventController.CreateEvent)
-			securedEventsGroup.DELETE("/:id", controllers.EventController.DeleteEvent)
-			securedEventsGroup.PUT("/:id", controllers.EventController.SubstituteEvent)
+			securedEventsGroup.POST("/", controllers.Event.Create)
+			securedEventsGroup.DELETE("/:id", controllers.Event.DeleteEvent)
+			securedEventsGroup.PUT("/:id", controllers.Event.SubstituteEvent)
 		}
 
 	}

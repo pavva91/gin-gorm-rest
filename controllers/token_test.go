@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/pavva91/gin-gorm-rest/auth"
+	"github.com/pavva91/gin-gorm-rest/dto"
 	"github.com/pavva91/gin-gorm-rest/mocks"
 	"github.com/pavva91/gin-gorm-rest/models"
 	"github.com/pavva91/gin-gorm-rest/services"
@@ -30,7 +31,7 @@ func Test_GenerateToken_InvalidRequestBody_400BadRequest(t *testing.T) {
 	wrongRequestBody := []string{"foo", "bar", "baz"}
 	mocks.MockJsonPost(context, wrongRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -51,13 +52,13 @@ func Test_GenerateToken_InvalidRequestBodyNoEmailField_400BadRequest(t *testing.
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Password: "pass1234",
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -79,13 +80,13 @@ func Test_GenerateToken_InvalidRequestBodyNoPasswordField_400BadRequest(t *testi
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Email: "alice@wonder.land",
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -106,7 +107,7 @@ func Test_GenerateToken_GetByEmailError_500InternalServerError(t *testing.T) {
 	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return nil, errors.New(internalErrorMessage)
 	}
-	services.UserService = userServiceStub
+	services.User = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -115,14 +116,14 @@ func Test_GenerateToken_GetByEmailError_500InternalServerError(t *testing.T) {
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Email:    "alice@wonder.land",
 		Password: "pass1234",
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -142,7 +143,7 @@ func Test_GenerateToken_WrongEmail_401Unauthorized(t *testing.T) {
 	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = userServiceStub
+	services.User = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -151,7 +152,7 @@ func Test_GenerateToken_WrongEmail_401Unauthorized(t *testing.T) {
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 
 		Email:    "alice@wonder.land",
 		Password: "pass1234",
@@ -159,7 +160,7 @@ func Test_GenerateToken_WrongEmail_401Unauthorized(t *testing.T) {
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -182,7 +183,7 @@ func Test_GenerateToken_WrongPassword_401Unauthorized(t *testing.T) {
 	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = userServiceStub
+	services.User = userServiceStub
 
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
@@ -191,14 +192,14 @@ func Test_GenerateToken_WrongPassword_401Unauthorized(t *testing.T) {
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Email:    "alice@wonder.land",
 		Password: wrongPassword,
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -222,7 +223,7 @@ func Test_GenerateToken_GenerateJWTError_500InternalServerError(t *testing.T) {
 	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = userServiceStub
+	services.User = userServiceStub
 
 	authenticationUtilityMock := stubs.AuthenticationUtilityStub{}
 	authenticationUtilityMock.GenerateJWTFn = func() (tokenString string, err error) {
@@ -237,14 +238,14 @@ func Test_GenerateToken_GenerateJWTError_500InternalServerError(t *testing.T) {
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Email:    "alice@wonder.land",
 		Password: correctPassword,
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
@@ -267,7 +268,7 @@ func Test_GenerateToken_CorrectUser_200JWTToken(t *testing.T) {
 	userServiceStub.GetByEmailFn = func() (*models.User, error) {
 		return &userStub, nil
 	}
-	services.UserService = userServiceStub
+	services.User = userServiceStub
 
 	authenticationUtilityMock := stubs.AuthenticationUtilityStub{}
 	authenticationUtilityMock.GenerateJWTFn = func() (tokenString string, err error) {
@@ -282,14 +283,14 @@ func Test_GenerateToken_CorrectUser_200JWTToken(t *testing.T) {
 		Header: make(http.Header),
 	}
 
-	mockRequestBody := TokenRequest{
+	mockRequestBody := dto.TokenRequest{
 		Email:    "alice@wonder.land",
 		Password: correctPassword,
 	}
 
 	mocks.MockJsonPost(context, mockRequestBody)
 
-	TokenController.GenerateToken(context)
+	JWT.GenerateToken(context)
 
 	actualHttpStatus := context.Writer.Status()
 	actualHttpBody := response.Body.String()
